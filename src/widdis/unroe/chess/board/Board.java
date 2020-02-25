@@ -35,42 +35,44 @@ public class Board {
                         board[i][j].setPiece(new Pawn(Piece.Color.BLACK));
                         break;
                     case 'K':
-                        board[i][j].setPiece(new King(Piece.Color.BLACK));
+                        board[i][j].setPiece(new King(Piece.Color.WHITE));
                         break;
                     case 'k':
                         board[i][j].setPiece(new King(Piece.Color.BLACK));
                         break;
                     case 'Q':
-                        board[i][j].setPiece(new Pawn(Piece.Color.BLACK));
+                        board[i][j].setPiece(new Queen(Piece.Color.WHITE));
                         break;
                     case 'q':
-                        board[i][j].setPiece(new Pawn(Piece.Color.BLACK));
+                        board[i][j].setPiece(new Queen(Piece.Color.BLACK));
                         break;
                     case 'R':
-                        board[i][j].setPiece(new Pawn(Piece.Color.BLACK));
+                        board[i][j].setPiece(new Rook(Piece.Color.WHITE));
                         break;
                     case 'r':
-                        board[i][j].setPiece(new Pawn(Piece.Color.BLACK));
+                        board[i][j].setPiece(new Rook(Piece.Color.BLACK));
                         break;
                     case 'N':
-                        board[i][j].setPiece(new Pawn(Piece.Color.BLACK));
+                        board[i][j].setPiece(new Knight(Piece.Color.WHITE));
                         break;
                     case 'n':
-                        board[i][j].setPiece(new Pawn(Piece.Color.BLACK));
+                        board[i][j].setPiece(new Knight(Piece.Color.BLACK));
                         break;
                     case 'B':
-                        board[i][j].setPiece(new Pawn(Piece.Color.BLACK));
+                        board[i][j].setPiece(new Bishop(Piece.Color.WHITE));
                         break;
                     case 'b':
-                        board[i][j].setPiece(new Pawn(Piece.Color.BLACK));
+                        board[i][j].setPiece(new Bishop(Piece.Color.BLACK));
                         break;
+                    default:
+                        throw new IllegalArgumentException("Invalid Board String: " + rows[i].charAt(j));
                 }
             }
         }
     }
 
     public int checkWin() {
-
+        return 0;
     }
 
     public void move(String moveStr) {
