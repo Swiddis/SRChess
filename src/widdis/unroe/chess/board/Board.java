@@ -11,6 +11,7 @@ public class Board {
 
     public Board() {
         // Initialize Board
+
         board = new Square[HEIGHT][WIDTH];
         for (int i = 0; i < HEIGHT; i++) {
             Arrays.fill(board[i], new Square());
