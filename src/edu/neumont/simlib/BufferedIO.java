@@ -1,12 +1,13 @@
 package edu.neumont.simlib;
 
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * This is a standard edu.neumont.simlib.ConsoleIO Class that can be used to yield various types of console input from a user.
+ * This is a standard simlib.ConsoleIO Class that can be used to yield various types of console input from a user.
  * This was made because I was tired of rewriting the code every time, so I decided to make a special class specifically
  * for it.
  *
@@ -15,13 +16,30 @@ import java.util.regex.Pattern;
 public abstract class BufferedIO implements TextIO {
     BufferedReader reader;
 
+    // Display methods: Must be implemented by child for this class to display output in the preferred medium.
+
+    /**
+     * displayText will display the output without a trailing newline.
+     *
+     * @param s The string to be outputted
+     */
     public abstract void displayText(String s);
+    /**
+     * displayText will display the output with a trailing newline.
+     *
+     * @param s The string to be outputted
+     */
     public abstract void displayLine(String s);
+    /**
+     * This is the output form to use when the user input is invalid.
+     *
+     * @param s The string to be outputted
+     */
     public abstract void displayErr(String s);
 
     public BufferedIO() {
         reader = new BufferedReader(new InputStreamReader(System.in));
-    };
+    }
 
     public BufferedIO(BufferedReader r) {
         reader = r;
@@ -51,7 +69,7 @@ public abstract class BufferedIO implements TextIO {
     public boolean getBoolPrefix(String prefix, String testTrueRegex, String testFalseRegex) {
         String bStr; // The raw input to be parsed
         boolean b = false; // Input boolean
-        boolean exit = false; // Exit condition for the input loop
+        boolean exit; // Exit condition for the input loop
         do {
             exit = true;
             if (prefix != null) displayText(prefix);
@@ -161,7 +179,7 @@ public abstract class BufferedIO implements TextIO {
     public int getIntPrefix(String prefix, int min, int max) {
         String nStr; // Raw input to parse
         long n = 0; // Input number (as a long to detect certain types of errors involving size)
-        boolean exit = false; // Exit condition for the input loop
+        boolean exit; // Exit condition for the input loop
         do {
             exit = true;
             if (prefix != null) displayText(prefix);
@@ -232,7 +250,7 @@ public abstract class BufferedIO implements TextIO {
     public double getDoublePrefix(String prefix, double min, double max) {
         String dStr; // Raw input to be parsed
         double d = 0; // Input double
-        boolean exit = false; // Exit condition for the input loop
+        boolean exit; // Exit condition for the input loop
         do {
             exit = true;
             if (prefix != null) displayText(prefix);
@@ -298,9 +316,9 @@ public abstract class BufferedIO implements TextIO {
      */
     @Override
     public char getCharPrefix(String prefix, String regex) {
-        String cStr = ""; // Raw input to parse, should only hold a character.
+        String cStr; // Raw input to parse, should only hold a character.
         char c = '\0'; // Character input
-        boolean exit = false; // Exit condition for the input loop
+        boolean exit; // Exit condition for the input loop
         do {
             exit = true;
             if (prefix != null) displayText(prefix);
@@ -369,7 +387,7 @@ public abstract class BufferedIO implements TextIO {
     @Override
     public String getStringPrefix(String prefix, String regex) {
         String str = ""; // Raw string input
-        boolean exit = false; // Exit condition for the input loop
+        boolean exit; // Exit condition for the input loop
         do {
             exit = true;
             if (prefix != null) displayText(prefix);
@@ -385,5 +403,51 @@ public abstract class BufferedIO implements TextIO {
             }
         } while (!exit);
         return str;
+    }
+
+    // Extra non-interface methods: getting input from a specific type of menu
+
+    /**
+     * Will automatically build a menu with the given options and query the user for integer input.
+     *
+     * @param options A string array containing the options, in order, to query the user for.
+     * @param zeroIndex A boolean indicating whether the options should start at 0 or 1.
+     * @return The integer value of the user's selection
+     */
+    public int getIntFromMenu(String[] options, boolean zeroIndex) {
+        // Ensure we have a menu
+        if (options == null) return -1;
+        // Build and output the menu, keeping track of the length for the input
+        int i;
+        for (i = zeroIndex ? 0 : 1; i < options.length; i++) {
+            displayLine(i + " - " + options[zeroIndex ? i : i - 1]);
+        }
+        // Get the integer based on the menu options
+        return this.getInt(zeroIndex ? 0 : 1, i - 1);
+    }
+
+    /**
+     * Will automatically build a menu with the given options and query the user for integer input.
+     *
+     * @param options A Character:String map containing the Choice:Option set to query the user for.
+     * @return The character value of the user's selection
+     */
+    public int getCharFromMenu(Map<Character, String> options) {
+        // Ensure we have a menu
+        if (options == null) return '\0';
+        // Build and output the menu
+        for (Character c : options.keySet()) {
+            displayLine(c + " - " + options.get(c));
+        }
+        // Convert keys to array of characters and build a regex string
+        // Is there a more efficient way to do this?
+        Character[] keyArray = (Character[]) options.keySet().toArray();
+        char[] keyChars = new char[keyArray.length];
+        for (int i = 0; i < keyArray.length; i++) {
+            keyChars[i] = keyArray[i];
+        }
+        // Wrap regex in quote tags to avoid mishandling special characters
+        String checkRegex = "[\\Q" + new String(keyChars) + "\\E]";
+        return this.getChar(checkRegex);
     }
 }

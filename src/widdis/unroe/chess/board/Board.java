@@ -84,10 +84,25 @@ public class Board {
     }
 
     public void move(String moveStr) {
-
+        int[][] moves = parseMoveStr(moveStr);
+        if (board[moves[0][0]][moves[0][1]].getPiece().checkIsLegal(
+                board[moves[0][0]][moves[0][1]], board[moves[1][0]][moves[1][1]], board
+        )) {
+            board[moves[1][0]][moves[1][1]].setPiece(board[moves[0][0]][moves[0][1]].getPiece());
+            board[moves[0][0]][moves[0][1]].setPiece(null);
+        } else {
+            throw new IllegalArgumentException("Illegal Move!");
+        }
     }
 
-    public String parseMoveStr(String moveStr) {
-        return moveStr;
+    public int[][] parseMoveStr(String moveStr) {
+        // For now, blindly assume input is proper
+        moveStr = moveStr.toLowerCase();
+        int[][] moves = new int[2][2];
+        moves[0][0] = (int) moveStr.charAt(0) - 61;
+        moves[0][1] = (int) moveStr.charAt(1) - 49;
+        moves[1][0] = (int) moveStr.charAt(2) - 61;
+        moves[1][1] = (int) moveStr.charAt(3) - 49;
+        return moves;
     }
 }
