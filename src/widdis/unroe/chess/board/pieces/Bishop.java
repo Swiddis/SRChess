@@ -16,10 +16,10 @@ public class Bishop extends Piece {
         HashSet<Square> moveSet = new HashSet<>();
         int[] p = curr.getPos();
         int tr = Math.max(p[0], p[1]);
-        int tl = Math.max(Board.WIDTH-p[0], p[1]);
-        int br = Math.max(p[0], Board.HEIGHT-p[0]);
-        int bl = Math.max(Board.WIDTH-p[0], Board.HEIGHT-p[1]);
-        for (int d = tr + 1; tr + d < Board.HEIGHT; d++) {
+        int tl = Math.max(p[0], Board.SIZE - p[1]);
+        int br = Math.max(Board.SIZE - p[0], p[1]);
+        int bl = Math.max(Board.SIZE - p[0], Board.SIZE - p[1]);
+        for (int d = tr + 1; tr + d < Board.SIZE; d++) {
             if (board[p[0]+d][p[1]+d].isEmpty()) moveSet.add(board[p[0]+d][p[1]+d]);
             else {
                 if (!board[p[0]+d][p[1]+d].getPiece().getColor().equals(this.getColor()))
@@ -27,7 +27,7 @@ public class Bishop extends Piece {
                 break;
             }
         }
-        for (int d = tl + 1; tl + d < Board.HEIGHT; d++) {
+        for (int d = tl + 1; tl + d < Board.SIZE; d++) {
             if (board[p[0]+d][p[1]-d].isEmpty()) moveSet.add(board[p[0]+d][p[1]-d]);
             else {
                 if (!board[p[0]+d][p[1]-d].getPiece().getColor().equals(this.getColor()))

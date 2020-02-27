@@ -16,7 +16,7 @@ public class King extends Piece {
     public HashSet<Square> getLegalMoves(Square curr, Square[][] board) {
         HashSet<Square> moveSet = new HashSet<>();
         int[] p = curr.getPos();
-        for (int r = p[0] + 1; r < Board.HEIGHT; r++) {
+        for (int r = p[0] + 1; r < Board.SIZE; r++) {
             if (board[r][p[1]].isEmpty()) moveSet.add(board[r][p[1]]);
             else {
                 if (!board[r][p[1]].getPiece().getColor().equals(this.getColor())) moveSet.add(board[r][p[1]]);

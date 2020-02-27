@@ -19,18 +19,18 @@ public class View {
         boolean checkered = true;
         String boardString = " |";
         //Displays column labels
-        for(int letter = (activePlayer == Piece.Color.WHITE ? 0 : board.HEIGHT-1 );
-            (activePlayer == Piece.Color.WHITE ? letter < board.HEIGHT : letter >= 0);
+        for(int letter = (activePlayer == Piece.Color.WHITE ? 0 : board.SIZE -1 );
+            (activePlayer == Piece.Color.WHITE ? letter < board.SIZE : letter >= 0);
             letter += (activePlayer == Piece.Color.WHITE ? 1 : -1)) {
             boardString += columnLabels[letter] + "|";
         }
         boardString +="\r\n";
-        for(int i = (activePlayer == Piece.Color.WHITE ? board.HEIGHT-1 : 0);
-            (activePlayer == Piece.Color.WHITE ? i >= 0 : i < board.HEIGHT);
+        for(int i = (activePlayer == Piece.Color.WHITE ? board.SIZE -1 : 0);
+            (activePlayer == Piece.Color.WHITE ? i >= 0 : i < board.SIZE);
             i += (activePlayer == Piece.Color.WHITE ? -1 : 1)) {
             boardString+=(i+1);
-            for(int j = (activePlayer == Piece.Color.WHITE ? 0 : board.WIDTH-1);
-                (activePlayer == Piece.Color.WHITE ? j < board.WIDTH : j >= 0);
+            for(int j = (activePlayer == Piece.Color.WHITE ? 0 : board.SIZE -1);
+                (activePlayer == Piece.Color.WHITE ? j < board.SIZE : j >= 0);
                 j += (activePlayer == Piece.Color.WHITE ? 1 : -1)) {
 
                 boardString += "|";
