@@ -56,7 +56,10 @@ public class Rook extends Piece {
 
     @Override
     public String toUnicode() {
-        return null;
+        if(color == Color.WHITE) {
+            return "\u2656";
+        }
+        return "\u265C";
     }
 
     @Override

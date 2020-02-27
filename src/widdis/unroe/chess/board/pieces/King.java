@@ -57,7 +57,11 @@ public class King extends Piece {
 
     @Override
     public String toUnicode() {
-        return null;
+        if(color == Color.WHITE) {
+            return "\u2654";
+        }
+        return "\u265A";
+
     }
 
     @Override

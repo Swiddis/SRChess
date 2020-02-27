@@ -92,7 +92,10 @@ public class Queen extends Piece {
 
     @Override
     public String toUnicode() {
-        return null;
+        if(color == Color.WHITE) {
+            return "\u2655";
+        }
+        return "\u265B";
     }
 
     @Override

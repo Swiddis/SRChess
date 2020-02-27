@@ -63,7 +63,10 @@ public class Bishop extends Piece {
 
     @Override
     public String toUnicode() {
-        return null;
+        if(color == Color.WHITE) {
+            return "\u2657";
+        }
+        return "\u265D";
     }
 
     @Override
