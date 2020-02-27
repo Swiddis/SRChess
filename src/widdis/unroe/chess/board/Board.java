@@ -100,10 +100,10 @@ public class Board {
         // For now, blindly assume input is proper
         moveStr = moveStr.toLowerCase();
         int[][] moves = new int[2][2];
-        moves[0][0] = (int) moveStr.charAt(0) - 97;
-        moves[0][1] = (int) moveStr.charAt(1) - 49;
-        moves[1][0] = (int) moveStr.charAt(2) - 97;
-        moves[1][1] = (int) moveStr.charAt(3) - 49;
+        moves[0][1] = (int) moveStr.charAt(0) - 97;
+        moves[0][0] = (int) moveStr.charAt(1) - 49;
+        moves[1][1] = (int) moveStr.charAt(2) - 97;
+        moves[1][0] = (int) moveStr.charAt(3) - 49;
         return moves;
     }
 }

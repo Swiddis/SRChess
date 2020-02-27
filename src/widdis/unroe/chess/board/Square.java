@@ -26,4 +26,9 @@ public class Square {
     public int[] getPos() {
         return new int[]{row, col};
     }
+
+    @Override
+    public String toString() {
+        return this.row + ","+ this.col;
+    }
 }
