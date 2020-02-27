@@ -15,11 +15,8 @@ public class Bishop extends Piece {
     public HashSet<Square> getLegalMoves(Square curr, Square[][] board) {
         HashSet<Square> moveSet = new HashSet<>();
         int[] p = curr.getPos();
-        int tr = Math.max(p[0], p[1]);
-        int tl = Math.max(p[0], Board.SIZE - p[1]);
-        int br = Math.max(Board.SIZE - p[0], p[1]);
-        int bl = Math.max(Board.SIZE - p[0], Board.SIZE - p[1]);
-        for (int d = tr + 1; tr + d < Board.SIZE; d++) {
+        System.out.println(p[0] + " " + p[1]);
+        for (int d = 1; p[0] + d < Board.SIZE && p[1] + d < Board.SIZE; d++) {
             if (board[p[0]+d][p[1]+d].isEmpty()) moveSet.add(board[p[0]+d][p[1]+d]);
             else {
                 if (!board[p[0]+d][p[1]+d].getPiece().getColor().equals(this.getColor()))
@@ -27,7 +24,7 @@ public class Bishop extends Piece {
                 break;
             }
         }
-        for (int d = tl + 1; tl + d < Board.SIZE; d++) {
+        for (int d = 1; p[0] + d < Board.SIZE && p[1] - d >= 0; d++) {
             if (board[p[0]+d][p[1]-d].isEmpty()) moveSet.add(board[p[0]+d][p[1]-d]);
             else {
                 if (!board[p[0]+d][p[1]-d].getPiece().getColor().equals(this.getColor()))
@@ -35,7 +32,7 @@ public class Bishop extends Piece {
                 break;
             }
         }
-        for (int d = bl - 1; bl - d >= 0; d--) {
+        for (int d = 1; p[0] - d >= 0 && p[1] - d >= 0; d++) {
             if (board[p[0]-d][p[1]-d].isEmpty()) moveSet.add(board[p[0]-d][p[1]-d]);
             else {
                 if (!board[p[0]-d][p[1]-d].getPiece().getColor().equals(this.getColor()))
@@ -43,7 +40,7 @@ public class Bishop extends Piece {
                 break;
             }
         }
-        for (int d = br - 1; br - d >= 0; d--) {
+        for (int d = 1; p[0] - d >= 0 && p[1] + d < Board.SIZE; d++) {
             if (board[p[0]-d][p[1]+d].isEmpty()) moveSet.add(board[p[0]-d][p[1]+d]);
             else {
                 if (!board[p[0]-d][p[1]+d].getPiece().getColor().equals(this.getColor()))

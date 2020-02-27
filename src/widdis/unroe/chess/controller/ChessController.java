@@ -11,6 +11,8 @@ public class ChessController {
         view.showBoard(Piece.Color.WHITE, board);
         board.move("d2d4");
         view.showBoard(Piece.Color.WHITE, board);
+        board.move("d7d5");
+        view.showBoard(Piece.Color.WHITE, board);
         board.move("c1f4");
         view.showBoard(Piece.Color.WHITE, board);
     }
