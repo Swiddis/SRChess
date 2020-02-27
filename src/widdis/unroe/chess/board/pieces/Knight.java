@@ -11,6 +11,7 @@ public class Knight extends Piece {
         this.color = color;
     }
 
+    // TODO: Knight Logic
     @Override
     public HashSet<Square> getLegalMoves(Square curr, Square[][] board) {
         HashSet<Square> moveSet = new HashSet<>();

@@ -43,6 +43,42 @@ public class Queen extends Piece {
                 break;
             }
         }
+        int tr = Math.max(p[0], p[1]);
+        int tl = Math.max(Board.WIDTH-p[0], p[1]);
+        int br = Math.max(p[0], Board.HEIGHT-p[0]);
+        int bl = Math.max(Board.WIDTH-p[0], Board.HEIGHT-p[1]);
+        for (int d = tr + 1; tr + d < Board.HEIGHT; d++) {
+            if (board[p[0]+d][p[1]+d].isEmpty()) moveSet.add(board[p[0]+d][p[1]+d]);
+            else {
+                if (!board[p[0]+d][p[1]+d].getPiece().getColor().equals(this.getColor()))
+                    moveSet.add(board[p[0]+d][p[1]+d]);
+                break;
+            }
+        }
+        for (int d = tl + 1; tl + d < Board.HEIGHT; d++) {
+            if (board[p[0]+d][p[1]-d].isEmpty()) moveSet.add(board[p[0]+d][p[1]-d]);
+            else {
+                if (!board[p[0]+d][p[1]-d].getPiece().getColor().equals(this.getColor()))
+                    moveSet.add(board[p[0]+d][p[1]-d]);
+                break;
+            }
+        }
+        for (int d = bl - 1; bl - d >= 0; d--) {
+            if (board[p[0]-d][p[1]-d].isEmpty()) moveSet.add(board[p[0]-d][p[1]-d]);
+            else {
+                if (!board[p[0]-d][p[1]-d].getPiece().getColor().equals(this.getColor()))
+                    moveSet.add(board[p[0]-d][p[1]-d]);
+                break;
+            }
+        }
+        for (int d = br - 1; br - d >= 0; d--) {
+            if (board[p[0]-d][p[1]+d].isEmpty()) moveSet.add(board[p[0]-d][p[1]+d]);
+            else {
+                if (!board[p[0]-d][p[1]+d].getPiece().getColor().equals(this.getColor()))
+                    moveSet.add(board[p[0]-d][p[1]+d]);
+                break;
+            }
+        }
         return moveSet;
     }
 
