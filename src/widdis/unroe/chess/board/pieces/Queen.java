@@ -29,7 +29,7 @@ public class Queen extends Piece {
                 break;
             }
         }
-        for (int c = p[1] - 1; c >= 0; c--) {
+        for (int c = p[1] + 1; c < Board.SIZE; c++) {
             if (board[p[0]][c].isEmpty()) moveSet.add(board[p[0]][c]);
             else {
                 if (!board[p[0]][c].getPiece().getColor().equals(this.getColor())) moveSet.add(board[p[0]][c]);
