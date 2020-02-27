@@ -11,6 +11,7 @@ public class King extends Piece {
         this.color = color;
     }
 
+    // TODO: King Logic
     @Override
     public HashSet<Square> getLegalMoves(Square curr, Square[][] board) {
         HashSet<Square> moveSet = new HashSet<>();
