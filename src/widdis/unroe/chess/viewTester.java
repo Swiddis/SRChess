@@ -9,5 +9,6 @@ public class viewTester {
         View view = new View();
         Board board = new Board();
         view.showBoard(Piece.Color.WHITE, board);
+        view.showBoard(Piece.Color.BLACK, board);
     }
 }
