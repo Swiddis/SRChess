@@ -16,6 +16,7 @@ public class Board {
         for (int i = 0; i < HEIGHT; i++) {
            for(int j = 0; j < WIDTH; j++) {
                board[i][j] = new Square();
+               board[i][j].setPos(i, j);
            }
         }
         setBoard("RNBQKBNR/PPPPPPPP/......../......../......../......../pppppppp/rnbqkbnr");
@@ -99,9 +100,9 @@ public class Board {
         // For now, blindly assume input is proper
         moveStr = moveStr.toLowerCase();
         int[][] moves = new int[2][2];
-        moves[0][0] = (int) moveStr.charAt(0) - 61;
+        moves[0][0] = (int) moveStr.charAt(0) - 97;
         moves[0][1] = (int) moveStr.charAt(1) - 49;
-        moves[1][0] = (int) moveStr.charAt(2) - 61;
+        moves[1][0] = (int) moveStr.charAt(2) - 97;
         moves[1][1] = (int) moveStr.charAt(3) - 49;
         return moves;
     }
