@@ -10,5 +10,6 @@ public class viewTester {
         Board board = new Board();
         view.showBoard(Piece.Color.WHITE, board);
         view.showBoard(Piece.Color.BLACK, board);
+        System.out.println("\u2654");
     }
 }

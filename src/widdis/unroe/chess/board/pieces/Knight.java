@@ -17,7 +17,10 @@ public class Knight extends Piece {
 
     @Override
     public String toUnicode() {
-        return null;
+        if(color == Color.WHITE) {
+            return "\u2658";
+        }
+        return "\u265E";
     }
 
     @Override

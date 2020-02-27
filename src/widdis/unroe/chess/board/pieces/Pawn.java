@@ -17,7 +17,10 @@ public class Pawn extends Piece {
 
     @Override
     public String toUnicode() {
-        return null;
+        if(color == Color.WHITE) {
+            return "\u2659";
+        }
+        return "\u265F";
     }
     @Override
     public Color getColor() {
