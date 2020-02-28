@@ -419,7 +419,7 @@ public abstract class BufferedIO implements TextIO {
         if (options == null) return -1;
         // Build and output the menu, keeping track of the length for the input
         int i;
-        for (i = zeroIndex ? 0 : 1; i < options.length; i++) {
+        for (i = zeroIndex ? 0 : 1; zeroIndex ? i < options.length : (i < options.length + 1); i++) {
             displayLine(i + " - " + options[zeroIndex ? i : i - 1]);
         }
         // Get the integer based on the menu options

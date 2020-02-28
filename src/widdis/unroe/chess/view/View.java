@@ -1,14 +1,18 @@
 package widdis.unroe.chess.view;
 
+import edu.neumont.simlib.ConsoleIO;
 import widdis.unroe.chess.board.Board;
 import widdis.unroe.chess.board.pieces.Piece;
 
 public class View {
+    private ConsoleIO io = new ConsoleIO();
+
 
     public enum DisplayCharacter {
         FEN,
         UNICODE
     }
+
     private final String[] columnLabels = {
             "A","B","C","D","E","F","G","H"
     };
@@ -74,5 +78,17 @@ public class View {
         System.out.println(output);
     }
 
+    public void promptForContinue() {
+        io.getString();
+    }
+
+    public String promptForMove() {
+        return io.getStringPrefix("Enter a move (eg a1a2): ");
+    }
+    public int menuPrompt() {
+        this.displayMessage("Chess Menu");
+        String[] options = {"Player vs Player", "Player vs Computer", "Computer vs Computer", "Exit"};
+        return io.getIntFromMenu(options, false);
+    }
 }
 
