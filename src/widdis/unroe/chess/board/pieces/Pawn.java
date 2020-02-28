@@ -11,7 +11,6 @@ public class Pawn extends Piece {
         this.color = color;
     }
 
-    // TODO: Pawn Logic
     @Override
     public HashSet<Square> getLegalMoves(Square curr, Square[][] board) {
         HashSet<Square> moveSet = new HashSet<>();
