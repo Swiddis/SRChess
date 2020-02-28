@@ -15,7 +15,6 @@ public class Bishop extends Piece {
     public HashSet<Square> getLegalMoves(Square curr, Square[][] board) {
         HashSet<Square> moveSet = new HashSet<>();
         int[] p = curr.getPos();
-        System.out.println(p[0] + " " + p[1]);
         for (int d = 1; p[0] + d < Board.SIZE && p[1] + d < Board.SIZE; d++) {
             if (board[p[0]+d][p[1]+d].isEmpty()) moveSet.add(board[p[0]+d][p[1]+d]);
             else {
@@ -73,6 +72,6 @@ public class Bishop extends Piece {
 
     @Override
     public String toString() {
-        return null;
+        return "bishop";
     }
 }
