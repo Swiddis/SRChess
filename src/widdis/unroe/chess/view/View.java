@@ -86,7 +86,8 @@ public class View {
         return io.getStringPrefix("Enter a move (eg a1a2): ");
     }
     public int menuPrompt() {
-        String[] options = {"Player vs Player", "Player vs Computer", "Computer vs Computer"};
+        this.displayMessage("Chess Menu");
+        String[] options = {"Player vs Player", "Player vs Computer", "Computer vs Computer", "Exit"};
         return io.getIntFromMenu(options, false);
     }
 }

@@ -7,6 +7,7 @@ import widdis.unroe.chess.view.View;
 public class ChessController {
     View view = new View();
     Board board = new Board();
+    Piece.Color activePlayer = Piece.Color.WHITE;
     public void run() {
         boolean exitRequested = false;
         while(!exitRequested) {
@@ -21,6 +22,9 @@ public class ChessController {
                 case 3:
                     //comp vs comp
                     break;
+                case 4:
+                    exitRequested = true;
+                    break;
             }
 
         }
@@ -28,15 +32,34 @@ public class ChessController {
     }
 
     private void playervsplayer() {
-        while(board.checkWin() == 0) {
-            view.showBoard(Piece.Color.WHITE, board);
+        boolean isInPlay = true;
+        while(isInPlay) {
+            view.showBoard(activePlayer, board);
+            view.displayMessage(activePlayer.toString().substring(0,1) +  activePlayer.toString().toLowerCase().substring(1) + "'s turn");
             board.move(view.promptForMove());
-            view.showBoard(Piece.Color.WHITE, board);
+            view.showBoard(activePlayer, board);
+            view.displayMessage("Piece moved! Press enter to continue");
             view.promptForContinue();
+            toggleActivePlayer();
 
-            
-            view.showBoard(Piece.Color.BLACK, board);
-            board.move(view.promptForMove());
+            if(board.checkWin() != 0) {
+                isInPlay = false;
+                endGame();
+            }
         }
     }
+
+    private void toggleActivePlayer() {
+        activePlayer = activePlayer == Piece.Color.BLACK ? Piece.Color.WHITE : Piece.Color.BLACK;
+    }
+    private void endGame() {
+        toggleActivePlayer();
+        view.displayMessage(activePlayer + " won the game!\r\nPress enter to continue");
+        view.promptForContinue();
+
+
+    }
+
+
+
 }
