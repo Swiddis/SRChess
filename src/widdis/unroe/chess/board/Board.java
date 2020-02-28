@@ -85,6 +85,9 @@ public class Board {
     }
 
     public void move(String moveStr) {
+        if(moveStr.length() != 4) {
+            throw new IllegalArgumentException("Invalid Move!");
+        }
         int[][] moves = parseMoveStr(moveStr);
         if (board[moves[0][0]][moves[0][1]].getPiece().checkIsLegal(
                 board[moves[0][0]][moves[0][1]], board[moves[1][0]][moves[1][1]], board
