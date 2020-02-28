@@ -4,7 +4,6 @@ import widdis.unroe.chess.board.pieces.*;
 
 // TODO: Check & Checkmate detection
 // TODO: Stalemate Detection
-// TODO: Castling
 // TODO: Pawn Promotion
 public class Board {
     public static final int SIZE = 8;
@@ -18,6 +17,7 @@ public class Board {
            for(int j = 0; j < SIZE; j++) {
                board[i][j] = new Square();
                board[i][j].setPos(i, j);
+               board[i][j].setHasMoved(false);
            }
         }
         setBoard("RNBQKBNR/PPPPPPPP/......../......../......../......../pppppppp/rnbqkbnr");
@@ -89,18 +89,36 @@ public class Board {
         if(moveStr.length() != 4) {
             throw new IllegalArgumentException("Invalid Move!");
         }
-        int[][] moves = parseMoveStr(moveStr);
-        if (board[moves[0][0]][moves[0][1]].getPiece().checkIsLegal(
-                board[moves[0][0]][moves[0][1]], board[moves[1][0]][moves[1][1]], board
+        // m is the parsed move
+        // m[0] is the source position, m[1] is the destination position
+        int[][] m = parseMoveStr(moveStr);
+        if (board[m[0][0]][m[0][1]].getPiece().checkIsLegal(
+                board[m[0][0]][m[0][1]], board[m[1][0]][m[1][1]], board
         )) {
-            board[moves[1][0]][moves[1][1]].setPiece(board[moves[0][0]][moves[0][1]].getPiece());
-            board[moves[0][0]][moves[0][1]].setPiece(null);
-            if (board[moves[1][0]][moves[1][1]].isEnPassant() &&
-                    board[moves[1][0]][moves[1][1]].getPiece() instanceof Pawn) {
-                if (moves[0][0] < moves[1][0]) {
-                    board[moves[1][0] - 1][moves[1][1]].setPiece(null);
+            board[m[1][0]][m[1][1]].setPiece(board[m[0][0]][m[0][1]].getPiece());
+            board[m[0][0]][m[0][1]].setPiece(null);
+            board[m[0][0]][m[0][1]].setHasMoved(true);
+            board[m[1][0]][m[1][1]].setHasMoved(true);
+            // Special handling for castling
+            if (board[m[1][0]][m[1][1]].getPiece() instanceof King &&
+                    Math.abs(m[1][1] - m[0][1]) == 2) {
+                // Simply move the rook to the other side of the king
+                // Check left first, otherwise it's to the right
+                if (m[0][1] < m[1][1]) {
+                    board[m[0][0]][5].setPiece(board[m[0][0]][7].getPiece());
+                    board[m[0][0]][7].setPiece(null);
                 } else {
-                    board[moves[1][0] + 1][moves[1][1]].setPiece(null);
+                    board[m[0][0]][2].setPiece(board[m[0][0]][0].getPiece());
+                    board[m[0][0]][0].setPiece(null);
+                }
+            }
+            // Special handling for en passant
+            if (board[m[1][0]][m[1][1]].isEnPassant() &&
+                    board[m[1][0]][m[1][1]].getPiece() instanceof Pawn) {
+                if (m[0][0] < m[1][0]) {
+                    board[m[1][0] - 1][m[1][1]].setPiece(null);
+                } else {
+                    board[m[1][0] + 1][m[1][1]].setPiece(null);
                 }
             }
         } else {

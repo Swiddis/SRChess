@@ -6,6 +6,7 @@ public class Square {
     private Piece piece;
     private int row,col;
     private boolean enPassant;
+    private boolean hasMoved;
 
     public void setPiece(Piece p) {
         piece = p;
@@ -39,5 +40,13 @@ public class Square {
 
     public void setEnPassant(boolean b) {
         enPassant = b;
+    }
+
+    public boolean hasMoved() {
+        return hasMoved;
+    }
+
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
     }
 }
