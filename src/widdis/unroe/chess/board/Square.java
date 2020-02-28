@@ -3,8 +3,10 @@ package widdis.unroe.chess.board;
 import widdis.unroe.chess.board.pieces.Piece;
 
 public class Square {
-    Piece piece;
-    int row,col;
+    private Piece piece;
+    private int row,col;
+    private boolean enPassant;
+    private boolean hasMoved;
 
     public void setPiece(Piece p) {
         piece = p;
@@ -30,5 +32,21 @@ public class Square {
     @Override
     public String toString() {
         return this.row + ","+ this.col;
+    }
+
+    public boolean isEnPassant() {
+        return enPassant;
+    }
+
+    public void setEnPassant(boolean b) {
+        enPassant = b;
+    }
+
+    public boolean hasMoved() {
+        return hasMoved;
+    }
+
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
     }
 }
