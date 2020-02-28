@@ -20,6 +20,10 @@ public class View {
     private DisplayCharacter displayCharacter= DisplayCharacter.FEN;
 
     public void showBoard(Piece.Color activePlayer, Board board) {
+        showBoard(activePlayer, board, null);
+    }
+
+    public void showBoard(Piece.Color activePlayer, Board board, int[] latestMove) {
         boolean checkered = true;
         String boardString = " |";
         //Displays column labels
@@ -38,7 +42,17 @@ public class View {
                 j += (activePlayer == Piece.Color.WHITE ? 1 : -1)) {
 
                 boardString += "|";
-                if(checkered) {
+                    if (latestMove != null && latestMove[0]==i && latestMove[1] ==j) {
+                        System.out.println("matched?");
+                        if(activePlayer == Piece.Color.WHITE) {
+                            boardString += "\033[47m"; //Highlight
+                        }
+                        else {
+                            boardString += "\033[40m"; //Highlight
+                        }
+                    }
+
+                else if(checkered) {
                     boardString += "\033[100m"; //Dark Gray Background
                 }
                 checkered = !checkered;
@@ -58,7 +72,8 @@ public class View {
             boardString+="|\r\n";
             checkered = !checkered;
         }
-       this.displayMessage(boardString);
+
+        this.displayMessage(boardString);
     }
 
 

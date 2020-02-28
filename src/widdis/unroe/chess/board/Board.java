@@ -106,13 +106,14 @@ public class Board {
         return 0;
     }
 
-    public void move(String moveStr) {
+    public int[] move(String moveStr) {
         int[][] moves = parseMoveStr(moveStr);
         if (board[moves[0][0]][moves[0][1]].getPiece().checkIsLegal(
                 board[moves[0][0]][moves[0][1]], board[moves[1][0]][moves[1][1]], board
         )) {
             board[moves[1][0]][moves[1][1]].setPiece(board[moves[0][0]][moves[0][1]].getPiece());
             board[moves[0][0]][moves[0][1]].setPiece(null);
+            return new int[] {moves[1][0] , moves[1][1]};
         } else {
             throw new IllegalArgumentException("Illegal Move!");
         }
