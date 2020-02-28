@@ -82,10 +82,32 @@ public class Board {
         return this.board;
     }
     public int checkWin() {
+        boolean[] kings = new boolean[2]; //0 : white; 1 : black
+        for(int i = 0; i < this.SIZE; i++) {
+            for(int j = 0; j < this.SIZE; j++) {
+                try {
+                    if (board[i][j].getPiece().toString().equals("king")) {
+                        if (board[i][j].getPiece().getColor().equals(Piece.Color.WHITE)) {
+                            kings[0] = true;
+                        } else {
+                            kings[1] = true;
+                        }
+                    }
+                } catch(NullPointerException npe) {} //Empty squares
+            }
+        }
+
+        if(kings[0] && !kings[1]) { //return 1 on White win
+            return 1;
+        }
+        else if(!kings[0] && kings[1]) { //return 2 on Black win
+            return 2;
+        }
         return 0;
     }
 
-    public void move(String moveStr) {
+
+    public int[] move(String moveStr) {
         if(moveStr.length() != 4) {
             throw new IllegalArgumentException("Invalid Move!");
         }
@@ -121,6 +143,7 @@ public class Board {
                     board[m[1][0] + 1][m[1][1]].setPiece(null);
                 }
             }
+        return new int[] {moves[1][0] , moves[1][1]};
         } else {
             throw new IllegalArgumentException("Illegal Move!");
         }
