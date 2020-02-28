@@ -83,7 +83,14 @@ public class View {
     }
 
     public String promptForMove() {
-        return io.getStringPrefix("Enter a move (eg a1a2): ");
+        String move = io.getStringPrefix("Enter a move (eg a1a2) or resign: ");
+        if(move.equals("resign") || move.equals("exit") || move.equals("quit") ) {
+            throw new IllegalArgumentException("QUIT");
+        }
+        else if(move.length() != 4) {
+            throw new IllegalArgumentException("Invalid Move!");
+        }
+        return move;
     }
     public int menuPrompt() {
         this.displayMessage("Chess Menu");

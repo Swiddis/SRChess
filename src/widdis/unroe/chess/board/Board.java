@@ -97,19 +97,16 @@ public class Board {
             }
         }
 
-        if(kings[0] == true && kings[1] == false) { //return 1 on White win
+        if(kings[0] && !kings[1]) { //return 1 on White win
             return 1;
         }
-        else if(kings[0] == false && kings[1] == true) { //return 2 on Black win
+        else if(!kings[0] && kings[1]) { //return 2 on Black win
             return 2;
         }
         return 0;
     }
 
     public void move(String moveStr) {
-        if(moveStr.length() != 4) {
-            throw new IllegalArgumentException("Invalid Move!");
-        }
         int[][] moves = parseMoveStr(moveStr);
         if (board[moves[0][0]][moves[0][1]].getPiece().checkIsLegal(
                 board[moves[0][0]][moves[0][1]], board[moves[1][0]][moves[1][1]], board

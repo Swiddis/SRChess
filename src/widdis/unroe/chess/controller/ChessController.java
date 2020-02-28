@@ -35,10 +35,17 @@ public class ChessController {
         boolean isInPlay = true;
         while(isInPlay) {
             view.showBoard(activePlayer, board);
-            view.displayMessage(activePlayer.toString().substring(0,1) +  activePlayer.toString().toLowerCase().substring(1) + "'s turn");
-            movePiece();
+            view.displayMessage(getActivePlayerName() + "'s turn");
+            boolean pieceMoved = movePiece();
             view.showBoard(activePlayer, board);
-            view.displayMessage("Piece moved! Press enter to continue");
+            if(pieceMoved) {
+                view.displayMessage("Piece moved! Press enter to continue");
+            }
+            else {
+                view.displayMessage(getActivePlayerName() +  " gave up!");
+                isInPlay = false;
+                endGame();
+            }
             view.promptForContinue();
             toggleActivePlayer();
 
@@ -54,7 +61,12 @@ public class ChessController {
                 board.move(view.promptForMove());
                 return true;
             } catch (IllegalArgumentException iae) {
-                view.displayMessage("Invalid Move! Please try again");
+                if(iae.getMessage().equals("QUIT")) {
+                    return false;
+                }
+                else {
+                    view.displayMessage("Invalid Move! Please try again");
+                }
             }
         }
     }
@@ -63,9 +75,16 @@ public class ChessController {
     }
     private void endGame() {
         toggleActivePlayer();
-        view.displayMessage(activePlayer + " won the game!\r\nPress enter to continue");
+        view.displayMessage(getActivePlayerName() + " won the game!\r\nPress enter to continue");
         view.promptForContinue();
 
 
     }
+
+
+
+    private String getActivePlayerName() {
+        return activePlayer.toString().substring(0,1) +  activePlayer.toString().toLowerCase().substring(1);
+    }
 }
+
