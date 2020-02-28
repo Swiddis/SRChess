@@ -20,11 +20,13 @@ public class Pawn extends Piece {
         if (board[p[0]+step][p[1]].isEmpty()) {
             moveSet.add(board[p[0]+step][p[1]]);
         }
-        if (!board[p[0]+step][p[1]+1].isEmpty() && !board[p[0]+step][p[1]+1].getPiece().getColor().equals(this.getColor())) {
-            moveSet.add(board[p[0]+step][p[1]+1]);
-        }
-        if (!board[p[0]+step][p[1]-1].isEmpty() && !board[p[0]+step][p[1]-1].getPiece().getColor().equals(this.getColor())) {
-            moveSet.add(board[p[0]+step][p[1]-1]);
+        for (int i : new int[]{1, -1}) {
+            if (p[1] + i >= 0 && p[1] + i < Board.SIZE)
+                if ((!board[p[0] + step][p[1] + i].isEmpty() &&
+                        !board[p[0] + step][p[1] + i].getPiece().getColor().equals(this.getColor())) ||
+                        board[p[0] + step][p[1] + i].isEnPassant()) {
+                    moveSet.add(board[p[0] + step][p[1] + i]);
+                }
         }
         // Also check for the double move from the initial position
         // Verify we're at our starting position
@@ -32,6 +34,14 @@ public class Pawn extends Piece {
             // Then verify the destination is empty
             if (board[p[0]+2*step][p[1]].isEmpty()) {
                 moveSet.add(board[p[0]+2*step][p[1]]);
+                // Also handle en passant for double move
+                // Reset the full board's en passant before updating this piece's
+                for (int i = 0; i < Board.SIZE; i++) {
+                    for (int j = 0; j < Board.SIZE; j++) {
+                        board[i][j].setEnPassant(false);
+                    }
+                }
+                board[p[0]+step][p[1]].setEnPassant(true);
             }
         }
         return moveSet;

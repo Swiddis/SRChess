@@ -3,8 +3,8 @@ package widdis.unroe.chess.board;
 import widdis.unroe.chess.board.pieces.*;
 
 // TODO: Check & Checkmate detection
+// TODO: Stalemate Detection
 // TODO: Castling
-// TODO: En Passant
 // TODO: Pawn Promotion
 public class Board {
     public static final int SIZE = 8;
@@ -95,6 +95,14 @@ public class Board {
         )) {
             board[moves[1][0]][moves[1][1]].setPiece(board[moves[0][0]][moves[0][1]].getPiece());
             board[moves[0][0]][moves[0][1]].setPiece(null);
+            if (board[moves[1][0]][moves[1][1]].isEnPassant() &&
+                    board[moves[1][0]][moves[1][1]].getPiece() instanceof Pawn) {
+                if (moves[0][0] < moves[1][0]) {
+                    board[moves[1][0] - 1][moves[1][1]].setPiece(null);
+                } else {
+                    board[moves[1][0] + 1][moves[1][1]].setPiece(null);
+                }
+            }
         } else {
             throw new IllegalArgumentException("Illegal Move!");
         }
