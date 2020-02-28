@@ -8,12 +8,13 @@ public class ChessController {
     View view = new View();
     Board board = new Board();
     public void run() {
-        view.showBoard(Piece.Color.WHITE, board);
-        board.move("d2d4");
-        view.showBoard(Piece.Color.WHITE, board);
-        board.move("d7d5");
-        view.showBoard(Piece.Color.WHITE, board);
-        board.move("c1f4");
+        String[] testGameMoves = {
+                "e2e4", "e7e5", "g1f3", "b8c6", "f1b5"
+        };
+        for (String move : testGameMoves) {
+            view.showBoard(Piece.Color.WHITE, board);
+            board.move(move);
+        }
         view.showBoard(Piece.Color.WHITE, board);
     }
 }
