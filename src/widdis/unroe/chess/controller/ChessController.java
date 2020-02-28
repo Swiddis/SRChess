@@ -36,7 +36,7 @@ public class ChessController {
         while(isInPlay) {
             view.showBoard(activePlayer, board);
             view.displayMessage(activePlayer.toString().substring(0,1) +  activePlayer.toString().toLowerCase().substring(1) + "'s turn");
-            board.move(view.promptForMove());
+            movePiece();
             view.showBoard(activePlayer, board);
             view.displayMessage("Piece moved! Press enter to continue");
             view.promptForContinue();
@@ -48,7 +48,16 @@ public class ChessController {
             }
         }
     }
-
+    private boolean movePiece() {
+        while(true) {
+            try {
+                board.move(view.promptForMove());
+                return true;
+            } catch (IllegalArgumentException iae) {
+                view.displayMessage("Invalid Move! Please try again");
+            }
+        }
+    }
     private void toggleActivePlayer() {
         activePlayer = activePlayer == Piece.Color.BLACK ? Piece.Color.WHITE : Piece.Color.BLACK;
     }

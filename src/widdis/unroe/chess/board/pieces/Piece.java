@@ -19,9 +19,7 @@ public abstract class Piece {
     public abstract HashSet<Square> getLegalMoves(Square curr, Square[][] board);
 
     public boolean checkIsLegal(Square curr, Square dest, Square[][] board) {
-        System.out.println(curr + " " + dest);
         HashSet<Square> legalMoves = getLegalMoves(curr, board);
-        System.out.println(legalMoves.toString());
         return legalMoves.contains(dest);
     }
 }
