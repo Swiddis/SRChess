@@ -2,6 +2,10 @@ package widdis.unroe.chess.board;
 
 import widdis.unroe.chess.board.pieces.*;
 
+// TODO: Check & Checkmate detection
+// TODO: Castling
+// TODO: En Passant
+// TODO: Pawn Promotion
 public class Board {
     public static final int SIZE = 8;
     private Square[][] board;
