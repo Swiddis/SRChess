@@ -11,37 +11,20 @@ public class Knight extends Piece {
         this.color = color;
     }
 
-    // TODO: Knight Logic
     @Override
     public HashSet<Square> getLegalMoves(Square curr, Square[][] board) {
         HashSet<Square> moveSet = new HashSet<>();
         int[] p = curr.getPos();
-        for (int r = p[0] + 1; r < Board.HEIGHT; r++) {
-            if (board[r][p[1]].isEmpty()) moveSet.add(board[r][p[1]]);
-            else {
-                if (!board[r][p[1]].getPiece().getColor().equals(this.getColor())) moveSet.add(board[r][p[1]]);
-                break;
-            }
-        }
-        for (int r = p[0] - 1; r >= 0; r--) {
-            if (board[r][p[1]].isEmpty()) moveSet.add(board[r][p[1]]);
-            else {
-                if (!board[r][p[1]].getPiece().getColor().equals(this.getColor())) moveSet.add(board[r][p[1]]);
-                break;
-            }
-        }
-        for (int c = p[1] - 1; c >= 0; c--) {
-            if (board[p[0]][c].isEmpty()) moveSet.add(board[p[0]][c]);
-            else {
-                if (!board[p[0]][c].getPiece().getColor().equals(this.getColor())) moveSet.add(board[p[0]][c]);
-                break;
-            }
-        }
-        for (int c = p[1] - 1; c >= 0; c--) {
-            if (board[p[0]][c].isEmpty()) moveSet.add(board[p[0]][c]);
-            else {
-                if (!board[p[0]][c].getPiece().getColor().equals(this.getColor())) moveSet.add(board[p[0]][c]);
-                break;
+        // Define all 8 possible ideal knight moves
+        int[][] hops = new int[][]{{1,2},{2,1},{-1,2},{2,-1},{1,-2},{-2,1},{-1,-2},{-2,-1}};
+        for (int[] hop : hops) {
+            // Determine possible destination coordinates
+            int ph0 = p[0] + hop[0];
+            int ph1 = p[1] + hop[1];
+            // Verify the move is within the bounds of the board and can be moved to
+            if (ph0 < Board.SIZE && ph0 >= 0 && ph1 < Board.SIZE && ph1 >= 0 &&
+                    (board[ph0][ph1].isEmpty() || !board[ph0][ph1].getPiece().getColor().equals(this.getColor()))) {
+                moveSet.add(board[ph0][ph1]);
             }
         }
         return moveSet;

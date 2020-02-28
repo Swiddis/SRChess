@@ -2,19 +2,16 @@ package widdis.unroe.chess.board;
 
 import widdis.unroe.chess.board.pieces.*;
 
-import java.awt.*;
-import java.util.Arrays;
-
 public class Board {
-    public static final int HEIGHT = 8, WIDTH = 8;
+    public static final int SIZE = 8;
     private Square[][] board;
 
     public Board() {
         // Initialize Board
 
-        board = new Square[HEIGHT][WIDTH];
-        for (int i = 0; i < HEIGHT; i++) {
-           for(int j = 0; j < WIDTH; j++) {
+        board = new Square[SIZE][SIZE];
+        for (int i = 0; i < SIZE; i++) {
+           for(int j = 0; j < SIZE; j++) {
                board[i][j] = new Square();
                board[i][j].setPos(i, j);
            }
@@ -26,8 +23,8 @@ public class Board {
     // Initial position is RNBQKBNR/PPPPPPPP/......../......../......../......../pppppppp/rnbqkbnr
     private void setBoard(String boardStr) {
         String[] rows = boardStr.split("/");
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
                 switch (rows[i].charAt(j)) {
                     case '.':
                         this.board[i][j].setPiece(null);
