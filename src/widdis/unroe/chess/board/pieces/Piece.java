@@ -25,4 +25,3 @@ public abstract class Piece {
         return legalMoves.contains(dest);
     }
 }
-

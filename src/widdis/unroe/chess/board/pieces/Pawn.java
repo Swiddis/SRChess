@@ -16,32 +16,23 @@ public class Pawn extends Piece {
     public HashSet<Square> getLegalMoves(Square curr, Square[][] board) {
         HashSet<Square> moveSet = new HashSet<>();
         int[] p = curr.getPos();
-        for (int r = p[0] + 1; r < Board.SIZE; r++) {
-            if (board[r][p[1]].isEmpty()) moveSet.add(board[r][p[1]]);
-            else {
-                if (!board[r][p[1]].getPiece().getColor().equals(this.getColor())) moveSet.add(board[r][p[1]]);
-                break;
-            }
+        int step = this.getColor().equals(Piece.Color.WHITE) ? 1 : -1;
+        // First, check for the simple moves: a step forward and captures
+        if (board[p[0]+step][p[1]].isEmpty()) {
+            moveSet.add(board[p[0]+step][p[1]]);
         }
-        for (int r = p[0] - 1; r >= 0; r--) {
-            if (board[r][p[1]].isEmpty()) moveSet.add(board[r][p[1]]);
-            else {
-                if (!board[r][p[1]].getPiece().getColor().equals(this.getColor())) moveSet.add(board[r][p[1]]);
-                break;
-            }
+        if (!board[p[0]+step][p[1]+1].isEmpty() && !board[p[0]+step][p[1]+1].getPiece().getColor().equals(this.getColor())) {
+            moveSet.add(board[p[0]+step][p[1]+1]);
         }
-        for (int c = p[1] + 1; c < Board.SIZE; c++) {
-            if (board[p[0]][c].isEmpty()) moveSet.add(board[p[0]][c]);
-            else {
-                if (!board[p[0]][c].getPiece().getColor().equals(this.getColor())) moveSet.add(board[p[0]][c]);
-                break;
-            }
+        if (!board[p[0]+step][p[1]-1].isEmpty() && !board[p[0]+step][p[1]-1].getPiece().getColor().equals(this.getColor())) {
+            moveSet.add(board[p[0]+step][p[1]-1]);
         }
-        for (int c = p[1] - 1; c >= 0; c--) {
-            if (board[p[0]][c].isEmpty()) moveSet.add(board[p[0]][c]);
-            else {
-                if (!board[p[0]][c].getPiece().getColor().equals(this.getColor())) moveSet.add(board[p[0]][c]);
-                break;
+        // Also check for the double move from the initial position
+        // Verify we're at our starting position
+        if ((step > 0 && p[0] == 1) || (step < 0 && p[0] == 6)) {
+            // Then verify the destination is empty
+            if (board[p[0]+2*step][p[1]].isEmpty()) {
+                moveSet.add(board[p[0]+2*step][p[1]]);
             }
         }
         return moveSet;
