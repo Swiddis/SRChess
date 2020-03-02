@@ -43,7 +43,7 @@ public class View {
 
                 boardString += "|";
                     if (latestMove != null && latestMove[0]==i && latestMove[1] ==j) {
-                        System.out.println("matched?");
+                        
                         if(activePlayer == Piece.Color.WHITE) {
                             boardString += "\033[47m"; //Highlight
                         }
@@ -97,6 +97,15 @@ public class View {
         io.getString();
     }
 
+    public String promptPromotion() {
+        String newPiece = io.getStringPrefix("What would you like to promote your pawn to? (q,r,n,b): ");
+        newPiece = newPiece.trim().toLowerCase();
+        if(newPiece.equals("q") || newPiece.equals("r") || newPiece.equals("n") || newPiece.equals("b") ) {
+            return newPiece;
+        }
+        this.displayMessage("Invalid Piece!");
+        return null;
+    }
     public String promptForMove() {
         String move = io.getStringPrefix("Enter a move (eg a1a2) or resign: ");
         if(move.equals("resign") || move.equals("exit") || move.equals("quit") ) {

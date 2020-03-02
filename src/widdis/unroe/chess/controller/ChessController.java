@@ -40,9 +40,17 @@ public class ChessController {
             boolean pieceMoved = movePiece();
             view.showBoard(activePlayer, board, latestMove);
             //clear latest move so there is no accidental highlight
-            latestMove[0] = -1;
-            latestMove[1] = -1;
+            //latestMove[0] = -1;
+            //latestMove[1] = -1;
             if(pieceMoved) {
+                //
+                if(board.checkForPromotion(activePlayer, latestMove[0], latestMove[1])) {
+                    String newPiece = null;
+                    while(newPiece == null) {
+                        newPiece = view.promptPromotion();
+                    }
+                    board.promote(activePlayer, latestMove[0], latestMove[1], newPiece);
+                }
                 view.displayMessage("Piece moved! Press enter to continue");
             }
             else {
