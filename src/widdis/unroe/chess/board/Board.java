@@ -86,8 +86,8 @@ public class Board {
     }
     public int checkWin() {
         boolean[] kings = new boolean[2]; //0 : white; 1 : black
-        for(int i = 0; i < this.SIZE; i++) {
-            for(int j = 0; j < this.SIZE; j++) {
+        for(int i = 0; i < SIZE; i++) {
+            for(int j = 0; j < SIZE; j++) {
                 try {
                     if (board[i][j].getPiece().toString().equals("king")) {
                         if (board[i][j].getPiece().getColor().equals(Piece.Color.WHITE)) {
@@ -96,7 +96,7 @@ public class Board {
                             kings[1] = true;
                         }
                     }
-                } catch(NullPointerException npe) {} //Empty squares
+                } catch(NullPointerException ignored) {} //Empty squares
             }
         }
 
