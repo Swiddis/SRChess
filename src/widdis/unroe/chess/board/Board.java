@@ -2,16 +2,17 @@ package widdis.unroe.chess.board;
 
 import widdis.unroe.chess.board.pieces.*;
 
+import java.util.ArrayList;
+
 // TODO: Check & Checkmate detection
 // TODO: Stalemate Detection
-// TODO: Pawn Promotion
 public class Board {
     public static final int SIZE = 8;
     private Square[][] board;
+    private ArrayList<String> moveHistory;
 
     public Board() {
         // Initialize Board
-
         board = new Square[SIZE][SIZE];
         for (int i = 0; i < SIZE; i++) {
            for(int j = 0; j < SIZE; j++) {
@@ -21,6 +22,8 @@ public class Board {
            }
         }
         setBoard("RNBQKBNR/PPPPPPPP/......../......../......../......../pppppppp/rnbqkbnr");
+        // Also get move history, needed to use UCI protocol
+        moveHistory = new ArrayList<>();
     }
 
     // Parse a string to a board, with lowercase corresponding to black pieces, uppercase corresponding to white.
@@ -83,8 +86,8 @@ public class Board {
     }
     public int checkWin() {
         boolean[] kings = new boolean[2]; //0 : white; 1 : black
-        for(int i = 0; i < this.SIZE; i++) {
-            for(int j = 0; j < this.SIZE; j++) {
+        for(int i = 0; i < SIZE; i++) {
+            for(int j = 0; j < SIZE; j++) {
                 try {
                     if (board[i][j].getPiece().toString().equals("king")) {
                         if (board[i][j].getPiece().getColor().equals(Piece.Color.WHITE)) {
@@ -93,7 +96,7 @@ public class Board {
                             kings[1] = true;
                         }
                     }
-                } catch(NullPointerException npe) {} //Empty squares
+                } catch(NullPointerException ignored) {} //Empty squares
             }
         }
 
@@ -106,7 +109,8 @@ public class Board {
         return 0;
     }
 
-
+    // Needs to take move input in long algebraic notation without hyphens or capture delimiters, as per UCI protocol
+    // https://en.wikipedia.org/wiki/Algebraic_notation_%28chess%29#Long_algebraic_notation
     public int[] move(String moveStr) {
         if(moveStr.length() != 4) {
             throw new IllegalArgumentException("Invalid Move!");
@@ -134,7 +138,14 @@ public class Board {
                     board[m[0][0]][0].setPiece(null);
                 }
             }
-            // TODO: Special handling for promotion
+            // Special handling for promotion
+            if (m[1][0] == 7 && board[m[1][0]][m[1][1]].getPiece() instanceof Pawn) {
+                // Only a white pawn can ever reach row 8, so no color check is needed
+                promotePawnTo(m[2][0], m[1], Piece.Color.WHITE);
+            } else if (m[1][0] == 0 && board[m[1][0]][m[1][1]].getPiece() instanceof Pawn) {
+                // Similarly, only a black pawn can reach row 1.
+                promotePawnTo(m[2][0], m[1], Piece.Color.BLACK);
+            }
             // Special handling for en passant
             if (board[m[1][0]][m[1][1]].isEnPassant() &&
                     board[m[1][0]][m[1][1]].getPiece() instanceof Pawn) {
@@ -144,11 +155,29 @@ public class Board {
                     board[m[1][0] + 1][m[1][1]].setPiece(null);
                 }
             }
-
+            // If all of this went through correctly, the move was valid, add to history
+            moveHistory.add(moveStr);
             return new int[] {m[1][0] , m[1][1]};
 
         } else {
             throw new IllegalArgumentException("Illegal Move!");
+        }
+    }
+    
+    private void promotePawnTo(int pieceNum, int[] pos, Piece.Color color) {
+        switch (pieceNum) {
+            case 0:
+                board[pos[0]][pos[1]].setPiece(new Queen(color));
+                break;
+            case 1:
+                board[pos[0]][pos[1]].setPiece(new Rook(color));
+                break;
+            case 2:
+                board[pos[0]][pos[1]].setPiece(new Bishop(color));
+                break;
+            case 3:
+                board[pos[0]][pos[1]].setPiece(new Knight(color));
+                break;
         }
     }
 
