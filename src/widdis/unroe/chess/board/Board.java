@@ -2,16 +2,17 @@ package widdis.unroe.chess.board;
 
 import widdis.unroe.chess.board.pieces.*;
 
+import java.util.ArrayList;
+
 // TODO: Check & Checkmate detection
 // TODO: Stalemate Detection
-// TODO: Pawn Promotion
 public class Board {
     public static final int SIZE = 8;
     private Square[][] board;
+    private ArrayList<String> moveHistory;
 
     public Board() {
         // Initialize Board
-
         board = new Square[SIZE][SIZE];
         for (int i = 0; i < SIZE; i++) {
            for(int j = 0; j < SIZE; j++) {
@@ -21,6 +22,8 @@ public class Board {
            }
         }
         setBoard("RNBQKBNR/PPPPPPPP/......../......../......../......../pppppppp/rnbqkbnr");
+        // Also get move history, needed to use UCI protocol
+        moveHistory = new ArrayList<>();
     }
 
     // Parse a string to a board, with lowercase corresponding to black pieces, uppercase corresponding to white.
@@ -106,7 +109,8 @@ public class Board {
         return 0;
     }
 
-
+    // Needs to take move input in long algebraic notation without hyphens or capture delimiters, as per UCI protocol
+    // https://en.wikipedia.org/wiki/Algebraic_notation_%28chess%29#Long_algebraic_notation
     public int[] move(String moveStr) {
         if(moveStr.length() != 4) {
             throw new IllegalArgumentException("Invalid Move!");
@@ -151,7 +155,8 @@ public class Board {
                     board[m[1][0] + 1][m[1][1]].setPiece(null);
                 }
             }
-
+            // If all of this went through correctly, the move was valid, add to history
+            moveHistory.add(moveStr);
             return new int[] {m[1][0] , m[1][1]};
 
         } else {
