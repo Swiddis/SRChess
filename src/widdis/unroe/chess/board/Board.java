@@ -151,7 +151,9 @@ public class Board {
                     board[m[1][0] + 1][m[1][1]].setPiece(null);
                 }
             }
+
             return new int[] {m[1][0] , m[1][1]};
+
         } else {
             throw new IllegalArgumentException("Illegal Move!");
         }
