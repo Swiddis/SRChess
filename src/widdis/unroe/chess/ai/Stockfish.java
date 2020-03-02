@@ -2,6 +2,7 @@ package widdis.unroe.chess.ai;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 // Communicates with the Stockfish UCI Engine: https://stockfishchess.org/
@@ -15,8 +16,8 @@ public class Stockfish implements AutoCloseable {
     private OutputStreamWriter engineIn;
 
     public Stockfish(int level) throws IOException {
-        this.setLevel(level);
         this.initialize();
+        this.setLevel(level);
         this.setLevelProperties();
     }
 
@@ -41,9 +42,10 @@ public class Stockfish implements AutoCloseable {
 
     public void isready() throws IOException {
         engineIn.write("isready\n");
-        while (!engineOut.nextLine().equals("readyok")) {
-            continue;
-        }
+        String line;
+        do {
+            line = engineOut.nextLine();
+        } while (!line.equals("readyok"));
     }
 
     public int getLevel() {
@@ -60,12 +62,36 @@ public class Stockfish implements AutoCloseable {
 
     private void setLevelProperties() throws IOException {
         isready();
-        int lvl = this.getLevel();
-        int hashSize = 496 / 8 * (lvl + 1) + 16;
+        int hashSize = 62 * (level + 1) + 16;
         engineIn.write(String.format(
                 "setoption name Hash value %d\n" +
                 "setoption name Skill Level value %d\n",
                 hashSize,
-                LVL_SKILL[lvl]));
+                LVL_SKILL[level]));
+    }
+
+    public void resetGame() throws IOException {
+        isready();
+        engineIn.write("ucinewgame\n");
+    }
+
+    public String makeMove(ArrayList<String> moves) throws IOException {
+        // Setup position
+        isready();
+        if (moves.size() > 0)
+            engineIn.write("position startpos moves " + String.join(" ", moves) + "\n");
+        else
+            engineIn.write("position startpos\n");
+        // Tell engine to determine a move
+        isready();
+        engineIn.write("go movetime " + LVL_MOVETIMES[level] + " depth " + LVL_DEPTHS[level] + "\n");
+        // Move will be in the format "bestmove e2e4 ponder e7e6", we extract the 'e2e4' segment
+        // Wait for the move output
+        String line;
+        do {
+            line = engineOut.nextLine();
+        } while (!line.startsWith("bestmove"));
+        // Extract output from engine and return it
+        return line.split("\\s")[1];
     }
 }
