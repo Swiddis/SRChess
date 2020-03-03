@@ -8,6 +8,8 @@ public class Board {
     public static final int SIZE = 8;
     private Square[][] board;
     private Square[][] previousBoard;
+
+
     private ArrayList<String> moveHistory;
 
     public Board() {
@@ -79,6 +81,10 @@ public class Board {
             }
         }
 
+    }
+
+    public ArrayList<String> getMoveHistory() {
+        return moveHistory;
     }
 
     public Square[][] getBoard() {
