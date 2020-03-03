@@ -1,17 +1,21 @@
 package widdis.unroe.chess.controller;
 
+import widdis.unroe.chess.ai.Stockfish;
 import widdis.unroe.chess.board.Board;
 import widdis.unroe.chess.board.pieces.Piece;
 import widdis.unroe.chess.view.View;
 
+import java.io.IOException;
+
 public class ChessController {
     private View view = new View();
-    private Board board = new Board();
+    private Board board;
     private int[] latestMove = new int[2];
     private Piece.Color activePlayer = Piece.Color.WHITE;
-    public void run() {
+    public void run() throws IOException {
         boolean exitRequested = false;
         while(!exitRequested) {
+            board = new Board();
             switch(view.menuPrompt()){
                 case 1:
                     //player vs player
@@ -19,6 +23,7 @@ public class ChessController {
                     break;
                 case 2:
                     //player vs comp
+                    playervsAI();
                     break;
                 case 3:
                     //comp vs comp
@@ -35,26 +40,7 @@ public class ChessController {
     private void playervsplayer() {
         boolean isInPlay = true;
         while(isInPlay) {
-            view.showBoard(activePlayer, board);
-            view.displayMessage(getActivePlayerName() + "'s turn");
-            boolean pieceMoved = movePiece();
-            view.showBoard(activePlayer, board, latestMove);
-            //clear latest move so there is no accidental highlight
-            //latestMove[0] = -1;
-            //latestMove[1] = -1;
-            if(pieceMoved) {
-                //
-                if(board.checkForPromotion(activePlayer, latestMove[0], latestMove[1])) {
-                    String newPiece = view.promptPromotion();
-                    board.promote(activePlayer, latestMove[0], latestMove[1], newPiece);
-                }
-                view.displayMessage("Piece moved! Press enter to continue");
-            }
-            else {
-                view.displayMessage(getActivePlayerName() +  " gave up!");
-                isInPlay = false;
-                endGame();
-            }
+            playerTurn();
             view.promptForContinue();
             toggleActivePlayer();
 
@@ -62,8 +48,66 @@ public class ChessController {
                 isInPlay = false;
                 endGame();
             }
+
+            latestMove[0] = -1;
+            latestMove[1] = -1;
         }
     }
+
+
+
+    private void playervsAI() throws IOException {
+        Stockfish ai = new Stockfish(3);
+        boolean isInPlay = true;
+        while (isInPlay) {
+            if (activePlayer == Piece.Color.WHITE) { // Player's turn
+                isInPlay = playerTurn();
+                view.promptForContinue();
+            }
+            else {
+                compTurn(ai);
+            }
+
+            toggleActivePlayer();
+            if (board.checkWin() != 0) {
+                isInPlay = false;
+                endGame();
+            }
+            latestMove[0] = -1;
+            latestMove[1] = -1;
+        }
+    }
+
+
+    private boolean playerTurn() {
+        view.showBoard(activePlayer, board);
+        view.displayMessage(getActivePlayerName() + "'s turn");
+        boolean pieceMoved = movePiece();
+        view.showBoard(activePlayer, board, latestMove);
+        if (pieceMoved) {
+            if (board.checkForPromotion(activePlayer, latestMove[0], latestMove[1])) {
+                String newPiece = view.promptPromotion();
+
+                board.promote(activePlayer, latestMove[0], latestMove[1], newPiece);
+            }
+            view.displayMessage("Piece moved! Press enter to continue");
+        } else {
+            view.displayMessage(getActivePlayerName() + " gave up!");
+             return false;
+        }
+        return true;
+    }
+
+
+    private void compTurn(Stockfish comp) throws IOException {
+        comp.makeMove(board.getMoveHistory());
+        
+        //move
+        //show board with latest move
+
+    }
+
+
     private boolean movePiece() {
         while(true) {
             try {

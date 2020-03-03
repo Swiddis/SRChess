@@ -44,7 +44,9 @@ public class Stockfish implements AutoCloseable {
             engineIn = new BufferedWriter(new OutputStreamWriter(engine.getOutputStream()));
             engWrite("uci");
         } catch (IOException ex) {
-            throw new RuntimeException("Error starting Engine process.");
+            ex.printStackTrace();
+            throw new RuntimeException("Error starting Stockfish process");
+
         }
     }
 
