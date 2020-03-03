@@ -8,6 +8,8 @@ import java.util.Scanner;
 // Communicates with the Stockfish UCI Engine: https://stockfishchess.org/
 public class Stockfish implements AutoCloseable {
     // Class is designed for Stockfish, in theory will work with any UCI engine.
+    // On our specific hardware, using the popcnt version ("modern" in the source repo) is better, we use
+    // standard for more brevity.
     private static final String ENGINE_PATH = "stockfish_11_x64.exe";
     private int level;
     // Level difficulty presets are the tried and true versions provided by lichess:
@@ -35,13 +37,13 @@ public class Stockfish implements AutoCloseable {
 
     private void initialize() {
         try {
-            ProcessBuilder pb = new ProcessBuilder("stockfish_11_x64.exe");
+            ProcessBuilder pb = new ProcessBuilder(ENGINE_PATH);
             engine = pb.start();
             engineOut = new Scanner(engine.getInputStream());
             engineIn = new OutputStreamWriter(engine.getOutputStream());
             engineIn.write("uci\n");
         } catch (IOException ex) {
-            throw new RuntimeException("Error starting Stockfish process");
+            throw new RuntimeException("Error starting Engine process.");
         }
     }
 

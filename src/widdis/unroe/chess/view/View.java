@@ -76,9 +76,6 @@ public class View {
         this.displayMessage(boardString.toString());
     }
 
-
-
-
     private String getPieceCharacter(Board board, int i, int j) {
         if(displayCharacter == DisplayCharacter.FEN) {
             return board.getBoard()[i][j].getPiece().toFEN();
