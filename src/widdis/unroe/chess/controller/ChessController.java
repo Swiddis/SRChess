@@ -40,7 +40,7 @@ public class ChessController {
     private void playervsplayer() {
         boolean isInPlay = true;
         while(isInPlay) {
-            playerTurn();
+            isInPlay = playerTurn();
             view.promptForContinue();
             toggleActivePlayer();
 
@@ -52,15 +52,17 @@ public class ChessController {
             latestMove[0] = -1;
             latestMove[1] = -1;
         }
+        endGame();
     }
 
 
 
     private void playervsAI() throws IOException {
         Stockfish ai = new Stockfish(3);
+
         boolean isInPlay = true;
         while (isInPlay) {
-            if (activePlayer == Piece.Color.WHITE) { // Player's turn
+            if (activePlayer.equals(Piece.Color.WHITE)) { // Player's turn
                 isInPlay = playerTurn();
                 view.promptForContinue();
             }
@@ -100,8 +102,9 @@ public class ChessController {
 
 
     private void compTurn(Stockfish comp) throws IOException {
-        comp.makeMove(board.getMoveHistory());
-        
+
+        board.move(comp.makeMove(board.getMoveHistory()));
+
         //move
         //show board with latest move
 
@@ -129,7 +132,7 @@ public class ChessController {
         activePlayer = activePlayer == Piece.Color.BLACK ? Piece.Color.WHITE : Piece.Color.BLACK;
     }
     private void endGame() {
-        toggleActivePlayer();
+
         view.displayMessage(getActivePlayerName() + " won the game!\r\nPress enter to continue");
         view.promptForContinue();
 

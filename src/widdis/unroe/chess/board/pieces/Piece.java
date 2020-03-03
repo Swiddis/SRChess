@@ -7,6 +7,8 @@ import java.util.HashSet;
 public abstract class Piece {
     public enum Color {WHITE, BLACK}
 
+    Color color;
+
     @Override
     public abstract String toString();
     public abstract String toFEN();
