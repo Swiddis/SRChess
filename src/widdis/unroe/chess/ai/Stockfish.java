@@ -7,7 +7,12 @@ import java.util.Scanner;
 
 // Communicates with the Stockfish UCI Engine: https://stockfishchess.org/
 public class Stockfish implements AutoCloseable {
+    // Class is designed for Stockfish, in theory will work with any UCI engine.
+    private static final String ENGINE_PATH = "stockfish_11_x64.exe";
     private int level;
+    // Level difficulty presets are the tried and true versions provided by lichess:
+    // https://github.com/niklasf/fishnet/blob/master/fishnet.py#L116
+    // Note they apply to an older version, they use 8 while we use 11.
     private static final int[] LVL_SKILL = new int[]{0, 3, 6, 10, 14, 18, 20};
     private static final int[] LVL_MOVETIMES = new int[]{50, 100, 150, 200, 300, 400, 500, 1000};
     private static final int[] LVL_DEPTHS = new int[]{1, 1, 2, 3, 5, 8, 13, 22};

@@ -98,13 +98,10 @@ public class View {
     }
 
     public String promptPromotion() {
-        String newPiece = io.getStringPrefix("What would you like to promote your pawn to? (q,r,n,b): ");
+        String newPiece = io.getStringPrefix("What would you like to promote your pawn to? (q,r,n,b): ", "[qrnbQRNB]");
         newPiece = newPiece.trim().toLowerCase();
-        if(newPiece.equals("q") || newPiece.equals("r") || newPiece.equals("n") || newPiece.equals("b") ) {
-            return newPiece;
-        }
         this.displayMessage("Invalid Piece!");
-        return null;
+        return newPiece;
     }
     public String promptForMove() {
         String move = io.getStringPrefix("Enter a move (eg a1a2) or resign: ");

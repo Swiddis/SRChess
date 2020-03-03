@@ -158,6 +158,7 @@ public class Board {
     }
 
     private void unmove() {
+        moveHistory.remove(moveHistory.size() - 1);
         this.board = this.previousBoard.clone();
     }
 
@@ -245,6 +246,7 @@ public class Board {
                 board[x][y].setPiece(new Knight(activePlayer));
                 break;
         }
+        moveHistory.set(moveHistory.size() - 1, moveHistory.get(moveHistory.size() - 1) + newPiece);
     }
 
     public int[][] parseMoveStr(String moveStr) {

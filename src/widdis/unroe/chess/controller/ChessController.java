@@ -45,10 +45,7 @@ public class ChessController {
             if(pieceMoved) {
                 //
                 if(board.checkForPromotion(activePlayer, latestMove[0], latestMove[1])) {
-                    String newPiece = null;
-                    while(newPiece == null) {
-                        newPiece = view.promptPromotion();
-                    }
+                    String newPiece = view.promptPromotion();
                     board.promote(activePlayer, latestMove[0], latestMove[1], newPiece);
                 }
                 view.displayMessage("Piece moved! Press enter to continue");
