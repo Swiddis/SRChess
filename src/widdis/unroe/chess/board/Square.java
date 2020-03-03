@@ -50,3 +50,4 @@ public class Square {
         this.hasMoved = hasMoved;
     }
 }
+
