@@ -138,14 +138,7 @@ public class Board {
                     board[m[0][0]][0].setPiece(null);
                 }
             }
-            // Special handling for promotion
-            if (m[1][0] == 7 && board[m[1][0]][m[1][1]].getPiece() instanceof Pawn) {
-                // Only a white pawn can ever reach row 8, so no color check is needed
-                promotePawnTo(m[2][0], m[1], Piece.Color.WHITE);
-            } else if (m[1][0] == 0 && board[m[1][0]][m[1][1]].getPiece() instanceof Pawn) {
-                // Similarly, only a black pawn can reach row 1.
-                promotePawnTo(m[2][0], m[1], Piece.Color.BLACK);
-            }
+
             // Special handling for en passant
             if (board[m[1][0]][m[1][1]].isEnPassant() &&
                     board[m[1][0]][m[1][1]].getPiece() instanceof Pawn) {
@@ -164,19 +157,33 @@ public class Board {
         }
     }
     
-    private void promotePawnTo(int pieceNum, int[] pos, Piece.Color color) {
-        switch (pieceNum) {
-            case 0:
-                board[pos[0]][pos[1]].setPiece(new Queen(color));
+
+
+
+    public boolean checkForPromotion(Piece.Color activePlayer, int x, int y) {
+        if(board[x][y].getPiece() instanceof Pawn) {
+            if (activePlayer == Piece.Color.WHITE && x == 7) {
+                return true;
+            } else if (activePlayer == Piece.Color.BLACK && x == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void promote(Piece.Color activePlayer, int x, int y, String newPiece) {
+        switch (newPiece) {
+            case "q":
+                board[x][y].setPiece(new Queen(activePlayer));
                 break;
-            case 1:
-                board[pos[0]][pos[1]].setPiece(new Rook(color));
+            case "r":
+                board[x][y].setPiece(new Rook(activePlayer));
                 break;
-            case 2:
-                board[pos[0]][pos[1]].setPiece(new Bishop(color));
+            case "b":
+                board[x][y].setPiece(new Bishop(activePlayer));
                 break;
-            case 3:
-                board[pos[0]][pos[1]].setPiece(new Knight(color));
+            case "n":
+                board[x][y].setPiece(new Knight(activePlayer));
                 break;
         }
     }

@@ -5,10 +5,10 @@ import widdis.unroe.chess.board.pieces.Piece;
 import widdis.unroe.chess.view.View;
 
 public class ChessController {
-    View view = new View();
-    Board board = new Board();
+    private View view = new View();
+    private Board board = new Board();
     private int[] latestMove = new int[2];
-    Piece.Color activePlayer = Piece.Color.WHITE;
+    private Piece.Color activePlayer = Piece.Color.WHITE;
     public void run() {
         boolean exitRequested = false;
         while(!exitRequested) {
@@ -40,9 +40,17 @@ public class ChessController {
             boolean pieceMoved = movePiece();
             view.showBoard(activePlayer, board, latestMove);
             //clear latest move so there is no accidental highlight
-            latestMove[0] = -1;
-            latestMove[1] = -1;
+            //latestMove[0] = -1;
+            //latestMove[1] = -1;
             if(pieceMoved) {
+                //
+                if(board.checkForPromotion(activePlayer, latestMove[0], latestMove[1])) {
+                    String newPiece = null;
+                    while(newPiece == null) {
+                        newPiece = view.promptPromotion();
+                    }
+                    board.promote(activePlayer, latestMove[0], latestMove[1], newPiece);
+                }
                 view.displayMessage("Piece moved! Press enter to continue");
             }
             else {
