@@ -6,7 +6,7 @@ import widdis.unroe.chess.view.View;
 
 public class ChessController {
     private View view = new View();
-    private Board board = new Board();
+    private Board board;
     private int[] latestMove = new int[2];
     private Piece.Color activePlayer = Piece.Color.WHITE;
     public void run() {
@@ -15,6 +15,7 @@ public class ChessController {
             switch(view.menuPrompt()){
                 case 1:
                     //player vs player
+                    board = new Board();
                     playervsplayer();
                     break;
                 case 2:
@@ -40,8 +41,6 @@ public class ChessController {
             boolean pieceMoved = movePiece();
             view.showBoard(activePlayer, board, latestMove);
             //clear latest move so there is no accidental highlight
-            //latestMove[0] = -1;
-            //latestMove[1] = -1;
             if(pieceMoved) {
                 //
                 if(board.checkForPromotion(activePlayer, latestMove[0], latestMove[1])) {
@@ -65,6 +64,9 @@ public class ChessController {
                 isInPlay = false;
                 endGame();
             }
+
+            latestMove[0] = -1;
+            latestMove[1] = -1;
         }
     }
     private boolean movePiece() {
