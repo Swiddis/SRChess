@@ -34,6 +34,7 @@ public class Stockfish implements AutoCloseable {
         engWrite("quit");
         engineIn.close();
         engineOut.close();
+        engine.destroy();
     }
 
     private void initialize() {
