@@ -216,8 +216,7 @@ public class Board {
 
     // Pass in attacking color
     public boolean isStalemate(Piece.Color color) {
-        if (isCheck(color)) return false;
-        return isMate(color);
+        return !isCheck(color) && isMate(color);
     }
 
     public boolean checkForPromotion(Piece.Color activePlayer, int x, int y) {
