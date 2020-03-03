@@ -6,9 +6,8 @@ import widdis.unroe.chess.board.Square;
 import java.util.HashSet;
 
 public class King extends Piece {
-    private Color color;
     public King(Color color) {
-        this.color = color;
+        this.setColor(color);
     }
 
     @Override
