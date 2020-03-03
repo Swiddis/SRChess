@@ -10,7 +10,7 @@ public class Stockfish implements AutoCloseable {
     // Class is designed for Stockfish, in theory will work with any UCI engine.
     // On our specific hardware, using the popcnt version ("modern" in the source repo) is better, we use
     // standard for more brevity.
-    private static final String ENGINE_PATH = "stockfish_11_x64.exe";
+    private static final String ENGINE_PATH = "engine/stockfish_11_x64.exe";
     private int level;
     // Level difficulty presets are the tried and true versions provided by lichess:
     // https://github.com/niklasf/fishnet/blob/master/fishnet.py#L116
