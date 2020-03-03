@@ -43,7 +43,7 @@ public class View {
 
                 boardString += "|";
                     if (latestMove != null && latestMove[0]==i && latestMove[1] ==j) {
-                        
+
                         if(activePlayer == Piece.Color.WHITE) {
                             boardString += "\033[47m"; //Highlight
                         }

@@ -5,10 +5,10 @@ import widdis.unroe.chess.board.pieces.Piece;
 import widdis.unroe.chess.view.View;
 
 public class ChessController {
-    View view = new View();
-    Board board = new Board();
+    private View view = new View();
+    private Board board = new Board();
     private int[] latestMove = new int[2];
-    Piece.Color activePlayer = Piece.Color.WHITE;
+    private Piece.Color activePlayer = Piece.Color.WHITE;
     public void run() {
         boolean exitRequested = false;
         while(!exitRequested) {
