@@ -63,11 +63,6 @@ public class Rook extends Piece {
     }
 
     @Override
-    public Color getColor() {
-        return this.color;
-    }
-
-    @Override
     public String toString() {
         return "rook";
     }

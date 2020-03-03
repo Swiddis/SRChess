@@ -20,15 +20,16 @@ public class Board {
                board[i][j].setHasMoved(false);
            }
         }
-        setBoard("RNBQKBNR/PPPPPPPP/......../......../......../......../pppppppp/rnbqkbnr");
+        setBoard();
         // Also get move history, needed to use UCI protocol
         moveHistory = new ArrayList<>();
     }
 
     // Parse a string to a board, with lowercase corresponding to black pieces, uppercase corresponding to white.
     // Initial position is RNBQKBNR/PPPPPPPP/......../......../......../......../pppppppp/rnbqkbnr
-    private void setBoard(String boardStr) {
-        String[] rows = boardStr.split("/");
+    private void setBoard() {
+        String startPos = "RNBQKBNR/PPPPPPPP/......../......../......../......../pppppppp/rnbqkbnr";
+        String[] rows = startPos.split("/");
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 switch (rows[i].charAt(j)) {
@@ -222,11 +223,8 @@ public class Board {
 
     public boolean checkForPromotion(Piece.Color activePlayer, int x, int y) {
         if(board[x][y].getPiece() instanceof Pawn) {
-            if (activePlayer == Piece.Color.WHITE && x == 7) {
-                return true;
-            } else if (activePlayer == Piece.Color.BLACK && x == 0) {
-                return true;
-            }
+            if (activePlayer == Piece.Color.WHITE && x == 7) return true;
+            else return activePlayer == Piece.Color.BLACK && x == 0;
         }
         return false;
     }

@@ -28,14 +28,14 @@ public class King extends Piece {
             }
         }
         // Also check for castling
-        if (!curr.hasMoved()) {
+        if (curr.hasNotMoved()) {
             // Castling kingside
-            if (!board[p[0]][7].hasMoved() &&
+            if (board[p[0]][7].hasNotMoved() &&
                     board[p[0]][6].isEmpty() && board[p[0]][5].isEmpty()) {
                 moveSet.add(board[p[0]][6]);
             }
             // Castling queenside
-            if (!board[p[0]][0].hasMoved() &&
+            if (board[p[0]][0].hasNotMoved() &&
                     board[p[0]][1].isEmpty() && board[p[0]][2].isEmpty() && board[p[0]][3].isEmpty()) {
                 moveSet.add(board[p[0]][1]);
             }
@@ -58,11 +58,6 @@ public class King extends Piece {
         }
         return "\u265A";
 
-    }
-
-    @Override
-    public Color getColor() {
-        return this.color;
     }
 
     @Override

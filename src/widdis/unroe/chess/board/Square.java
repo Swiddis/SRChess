@@ -42,8 +42,8 @@ public class Square {
         enPassant = b;
     }
 
-    public boolean hasMoved() {
-        return hasMoved;
+    public boolean hasNotMoved() {
+        return !hasMoved;
     }
 
     public void setHasMoved(boolean hasMoved) {

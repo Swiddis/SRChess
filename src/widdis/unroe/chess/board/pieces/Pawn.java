@@ -62,10 +62,6 @@ public class Pawn extends Piece {
         }
         return "\u265F";
     }
-    @Override
-    public Color getColor() {
-        return this.color;
-    }
 
 
     @Override

@@ -13,7 +13,13 @@ public abstract class Piece {
     public abstract String toString();
     public abstract String toFEN();
     public abstract String toUnicode();
-    public abstract Color getColor();
+
+    public void setColor(Color c) {
+        color = c;
+    }
+    public Color getColor() {
+        return color;
+    }
 
 
     public abstract HashSet<Square> getLegalMoves(Square curr, Square[][] board);

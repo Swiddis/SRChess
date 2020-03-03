@@ -47,11 +47,6 @@ public class Knight extends Piece {
     }
 
     @Override
-    public Color getColor() {
-        return this.color;
-    }
-
-    @Override
     public String toString() {
         return "knight";
     }

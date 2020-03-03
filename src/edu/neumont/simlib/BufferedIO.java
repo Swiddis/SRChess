@@ -77,9 +77,7 @@ public abstract class BufferedIO implements TextIO {
                 bStr = reader.readLine();
                 if (Pattern.matches(testTrueRegex, bStr)) {
                     b = true;
-                } else if (Pattern.matches(testFalseRegex, bStr)) {
-                    b = false;
-                } else {
+                } else if (!Pattern.matches(testFalseRegex, bStr)) {
                     exit = false;
                     displayErr("Sorry, I didn't understand your input.");
                 }
