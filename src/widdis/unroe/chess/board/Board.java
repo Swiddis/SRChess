@@ -4,7 +4,6 @@ import widdis.unroe.chess.board.pieces.*;
 
 import java.util.ArrayList;
 
-// TODO: Stalemate Detection
 public class Board {
     public static final int SIZE = 8;
     private Square[][] board;
@@ -189,7 +188,7 @@ public class Board {
     }
 
     // Pass in the attacking player
-    public boolean isMate(Piece.Color color) {
+    private boolean isMate(Piece.Color color) {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (!board[i][j].isEmpty() && board[i][j].getPiece().getColor() != color) {
@@ -197,6 +196,7 @@ public class Board {
                     for (Square move : board[i][j].getPiece().getLegalMoves(board[i][j], board)) {
                         char c3 = (char) (move.getPos()[0] + 97), c4 = (char) (move.getPos()[1] + 49);
                         this.move(new String(new char[]{c1, c2, c3, c4}));
+                        // For every move, check if it's legal by seeing if the opponent will be put in check
                         if (this.isCheck(color)) {
                             unmove();
                         } else {
@@ -209,9 +209,15 @@ public class Board {
         }
         return true;
     }
-    
 
+    public boolean isCheckmate(Piece.Color color) {
+        return isCheck(color) && isMate(color);
+    }
 
+    // Pass in attacking color
+    public boolean isStalemate(Piece.Color color) {
+        return !isCheck(color) && isMate(color);
+    }
 
     public boolean checkForPromotion(Piece.Color activePlayer, int x, int y) {
         if(board[x][y].getPiece() instanceof Pawn) {
