@@ -1,5 +1,6 @@
 package widdis.unroe.chess.ai;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class Stockfish implements AutoCloseable {
     private static final int[] LVL_DEPTHS = new int[]{1, 1, 2, 3, 5, 8, 13, 22};
     private Process engine;
     private Scanner engineOut;
-    private OutputStreamWriter engineIn;
+    private BufferedWriter engineIn;
 
     public Stockfish(int level) throws IOException {
         this.initialize();
@@ -30,7 +31,7 @@ public class Stockfish implements AutoCloseable {
 
     public void close() throws IOException {
         if (engine == null) return;
-        engineIn.write("quit\n");
+        engWrite("quit");
         engineIn.close();
         engineOut.close();
     }
@@ -40,15 +41,20 @@ public class Stockfish implements AutoCloseable {
             ProcessBuilder pb = new ProcessBuilder(ENGINE_PATH);
             engine = pb.start();
             engineOut = new Scanner(engine.getInputStream());
-            engineIn = new OutputStreamWriter(engine.getOutputStream());
-            engineIn.write("uci\n");
+            engineIn = new BufferedWriter(new OutputStreamWriter(engine.getOutputStream()));
+            engWrite("uci");
         } catch (IOException ex) {
             throw new RuntimeException("Error starting Engine process.");
         }
     }
 
+    public void engWrite(String s) throws IOException {
+        engineIn.write(s + "\n");
+        engineIn.flush();
+    }
+
     public void isready() throws IOException {
-        engineIn.write("isready\n");
+        engWrite("isready");
         String line;
         do {
             line = engineOut.nextLine();
@@ -70,28 +76,28 @@ public class Stockfish implements AutoCloseable {
     private void setLevelProperties() throws IOException {
         isready();
         int hashSize = 62 * (level + 1) + 16;
-        engineIn.write(String.format(
+        engWrite(String.format(
                 "setoption name Hash value %d\n" +
-                "setoption name Skill Level value %d\n",
+                "setoption name Skill Level value %d",
                 hashSize,
                 LVL_SKILL[level]));
     }
 
     public void resetGame() throws IOException {
         isready();
-        engineIn.write("ucinewgame\n");
+        engWrite("ucinewgame");
     }
 
     public String makeMove(ArrayList<String> moves) throws IOException {
         // Setup position
         isready();
         if (moves.size() > 0)
-            engineIn.write("position startpos moves " + String.join(" ", moves) + "\n");
+            engWrite("position startpos moves " + String.join(" ", moves));
         else
-            engineIn.write("position startpos\n");
+            engWrite("position startpos");
         // Tell engine to determine a move
         isready();
-        engineIn.write("go movetime " + LVL_MOVETIMES[level] + " depth " + LVL_DEPTHS[level] + "\n");
+        engWrite("go movetime " + LVL_MOVETIMES[level] + " depth " + LVL_DEPTHS[level] + "\n");
         // Move will be in the format "bestmove e2e4 ponder e7e6", we extract the 'e2e4' segment
         // Wait for the move output
         String line;
