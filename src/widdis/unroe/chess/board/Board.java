@@ -4,11 +4,11 @@ import widdis.unroe.chess.board.pieces.*;
 
 import java.util.ArrayList;
 
-// TODO: Check & Checkmate detection
 // TODO: Stalemate Detection
 public class Board {
     public static final int SIZE = 8;
     private Square[][] board;
+    private Square[][] previousBoard;
     private ArrayList<String> moveHistory;
 
     public Board() {
@@ -150,11 +150,64 @@ public class Board {
             }
             // If all of this went through correctly, the move was valid, add to history
             moveHistory.add(moveStr);
+            this.previousBoard = this.board.clone();
             return new int[] {m[1][0] , m[1][1]};
 
         } else {
             throw new IllegalArgumentException("Illegal Move!");
         }
+    }
+
+    private void unmove() {
+        this.board = this.previousBoard.clone();
+    }
+
+    // Pass in the attacking player
+    public boolean isCheck(Piece.Color color) {
+        int kposx = -1, kposy = -1;
+        // Locate the opposing king
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (board[i][j].getPiece() instanceof King && board[i][j].getPiece().getColor() != color) {
+                    kposy = i;
+                    kposx = j;
+                    break;
+                }
+            }
+            if (kposx >= 0) break;
+        }
+        // Now check which of the shared pieces have the check as a legal move
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (!board[i][j].isEmpty() && board[i][j].getPiece().getColor() == color &&
+                    board[i][j].getPiece().checkIsLegal(board[i][j], board[kposy][kposx], board)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Pass in the attacking player
+    public boolean isMate(Piece.Color color) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (!board[i][j].isEmpty() && board[i][j].getPiece().getColor() != color) {
+                    char c1 = (char) (j + 97), c2 = (char) (i + 49);
+                    for (Square move : board[i][j].getPiece().getLegalMoves(board[i][j], board)) {
+                        char c3 = (char) (move.getPos()[0] + 97), c4 = (char) (move.getPos()[1] + 49);
+                        this.move(new String(new char[]{c1, c2, c3, c4}));
+                        if (this.isCheck(color)) {
+                            unmove();
+                        } else {
+                            unmove();
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
     
 
