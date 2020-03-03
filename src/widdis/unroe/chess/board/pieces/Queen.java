@@ -6,9 +6,8 @@ import widdis.unroe.chess.board.Square;
 import java.util.HashSet;
 
 public class Queen extends Piece {
-    private Color color;
     public Queen(Color color) {
-        this.color = color;
+        this.setColor(color);
     }
 
     @Override
@@ -33,11 +32,6 @@ public class Queen extends Piece {
             return "\u2655";
         }
         return "\u265B";
-    }
-
-    @Override
-    public Color getColor() {
-        return this.color;
     }
 
     @Override
