@@ -118,9 +118,7 @@ public class Board {
     // Needs to take move input in long algebraic notation without hyphens or capture delimiters, as per UCI protocol
     // https://en.wikipedia.org/wiki/Algebraic_notation_%28chess%29#Long_algebraic_notation
     public int[] move(String moveStr) {
-        if(moveStr.length() != 4) {
-            throw new IllegalArgumentException("Invalid Move!");
-        }
+
         // m is the parsed move
         // m[0] is the source position, m[1] is the destination position
         int[][] m = parseMoveStr(moveStr);

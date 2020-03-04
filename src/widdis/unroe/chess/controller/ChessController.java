@@ -16,6 +16,7 @@ public class ChessController {
         boolean exitRequested = false;
         while(!exitRequested) {
             board = new Board();
+            activePlayer = Piece.Color.WHITE;
             switch(view.menuPrompt()){
                 case 1:
                     //player vs player
@@ -27,6 +28,7 @@ public class ChessController {
                     break;
                 case 3:
                     //comp vs comp
+                    AIvsAI();
                     break;
                 case 4:
                     exitRequested = true;
@@ -58,7 +60,8 @@ public class ChessController {
 
 
     private void playervsAI() throws IOException {
-        Stockfish ai = new Stockfish(3);
+        int difficulty = view.promptForDifficulty();
+        Stockfish ai = new Stockfish(difficulty);
 
         boolean isInPlay = true;
         while (isInPlay) {
@@ -77,6 +80,27 @@ public class ChessController {
             }
             latestMove[0] = -1;
             latestMove[1] = -1;
+        }
+    }
+
+    private void AIvsAI() throws IOException {
+        Stockfish ai_WHITE = new Stockfish(8);
+        Stockfish ai_BLACK = new Stockfish(8);
+        boolean isInPlay = true;
+        while (isInPlay) {
+            view.showBoard(Piece.Color.WHITE, board);
+            if (activePlayer.equals(Piece.Color.WHITE)) {
+                compTurn(ai_WHITE);
+            }
+            else {
+                compTurn(ai_BLACK);
+            }
+            toggleActivePlayer();
+            if (board.checkWin() != 0) {
+                isInPlay = false;
+                endGame();
+            }
+
         }
     }
 

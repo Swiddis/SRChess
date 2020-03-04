@@ -115,5 +115,9 @@ public class View {
         String[] options = {"Player vs Player", "Player vs Computer", "Computer vs Computer", "Exit"};
         return io.getIntFromMenu(options, false);
     }
+
+    public int promptForDifficulty() {
+        return io.getIntPrefix("What difficulty would you like to play against? (1-8): ", 1,8);
+    }
 }
 
