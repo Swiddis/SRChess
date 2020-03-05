@@ -18,6 +18,10 @@ public class Queen extends Piece {
         return moveSet;
     }
 
+    public Queen clone() {
+        return new Queen(color);
+    }
+
     @Override
     public String toFEN() {
         if(color == Color.WHITE) {

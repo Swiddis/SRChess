@@ -4,11 +4,11 @@ import widdis.unroe.chess.board.Square;
 
 import java.util.HashSet;
 
-public abstract class Piece {
+public abstract class Piece implements Cloneable {
+    public abstract Piece clone() throws CloneNotSupportedException;
+
     public enum Color {WHITE, BLACK}
     protected Color color;
-
-
 
     @Override
     public abstract String toString();

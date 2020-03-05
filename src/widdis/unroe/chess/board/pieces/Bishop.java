@@ -10,6 +10,10 @@ public class Bishop extends Piece {
         this.setColor(color);
     }
 
+    public Bishop clone() {
+        return new Bishop(color);
+    }
+
     @Override
     public HashSet<Square> getLegalMoves(Square curr, Square[][] board) {
         HashSet<Square> moveSet = new HashSet<>();

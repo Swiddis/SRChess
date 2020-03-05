@@ -192,11 +192,7 @@ public class ChessController {
 
         view.displayMessage(getActivePlayerName() + " won the game!\r\nPress enter to continue");
         view.promptForContinue();
-
-
     }
-
-
 
     private String getActivePlayerName() {
         return activePlayer.toString().substring(0,1) +  activePlayer.toString().toLowerCase().substring(1);

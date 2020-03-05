@@ -10,6 +10,10 @@ public class Knight extends Piece {
         this.setColor(color);
     }
 
+    public Knight clone() {
+        return new Knight(color);
+    }
+
     @Override
     public HashSet<Square> getLegalMoves(Square curr, Square[][] board) {
         HashSet<Square> moveSet = new HashSet<>();
