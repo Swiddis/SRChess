@@ -144,10 +144,9 @@ public class ChessController {
 
 
     private void compTurn(Stockfish comp) throws IOException {
-
         board.move(comp.makeMove(board.getMoveHistory()));
-
     }
+
 
     private boolean endOfTurnCheck() {
         if(board.isCheckmate(activePlayer)){
@@ -165,6 +164,8 @@ public class ChessController {
         return false;
 
     }
+
+
     private boolean movePiece() {
         while(true) {
             try {
@@ -177,6 +178,8 @@ public class ChessController {
                 else {
                     view.displayMessage("Invalid Move! Please try again");
                 }
+            } catch(NullPointerException npe) {
+                view.displayMessage("Invalid Move! Please try again");
             }
         }
     }

@@ -166,7 +166,7 @@ public class Board {
             return new int[] {m[1][0] , m[1][1]};
 
         } else {
-            throw new IllegalArgumentException("Illegal Move!");
+            throw new IllegalArgumentException("Illegal Move!" + moveStr);
         }
     }
 
@@ -205,12 +205,12 @@ public class Board {
     private boolean isMate(Piece.Color color) {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                if (!board[i][j].isEmpty() && board[i][j].getPiece().getColor() != color) {
-                    char c1 = (char) (j + 49), c2 = (char) (i + 97);
+                if (!board[i][j].isEmpty() && board[i][j].getPiece().getColor() == color) {
+                    char c1 = (char) (j + 97), c2 = (char) (i + 49);
                     for (Square move : board[i][j].getPiece().getLegalMoves(board[i][j], board)) {
 
-                        char c3 = (char) (move.getPos()[0] + 49), c4 = (char) (move.getPos()[1] + 97);
-                        this.move(new String(new char[]{c2, c1, c4, c3}));
+                        char c3 = (char) (move.getPos()[1] + 97), c4 = (char) (move.getPos()[0] + 49);
+                        this.move(new String(new char[]{c1, c2, c3, c4}));
 
                         // For every move, check if it's legal by seeing if the opponent will be put in check
                         if (this.isCheck(color)) {
