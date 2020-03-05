@@ -1,5 +1,6 @@
 package widdis.unroe.chess.board;
 
+import javafx.scene.effect.Blend;
 import widdis.unroe.chess.board.pieces.*;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ public class Board {
     public static final int SIZE = 8;
     private Square[][] board;
     private Square[][] previousBoard;
+    private int fiftyMoveCounter;
 
 
     private ArrayList<String> moveHistory;
@@ -25,6 +27,7 @@ public class Board {
         setBoard();
         // Also get move history, needed to use UCI protocol
         moveHistory = new ArrayList<>();
+        fiftyMoveCounter = 0;
     }
 
     // Parse a string to a board, with lowercase corresponding to black pieces, uppercase corresponding to white.
@@ -127,6 +130,11 @@ public class Board {
         if (board[m[0][0]][m[0][1]].getPiece().checkIsLegal(
                 board[m[0][0]][m[0][1]], board[m[1][0]][m[1][1]], board
         )) {
+            if (board[m[1][0]][m[1][1]].isEmpty() && !(board[m[0][0]][m[0][1]].getPiece() instanceof Pawn)) {
+                fiftyMoveCounter++;
+            } else {
+                fiftyMoveCounter = 0;
+            }
             board[m[1][0]][m[1][1]].setPiece(board[m[0][0]][m[0][1]].getPiece());
             board[m[0][0]][m[0][1]].setPiece(null);
             board[m[0][0]][m[0][1]].setHasMoved(true);
@@ -251,6 +259,21 @@ public class Board {
                 break;
         }
         moveHistory.set(moveHistory.size() - 1, moveHistory.get(moveHistory.size() - 1) + newPiece);
+    }
+
+    public boolean checkFiftyMoves() {
+        // We need to double it from 50 because one move is one step for each player, and we increment every step
+        return fiftyMoveCounter >= 100;
+    }
+
+    public boolean checkThreefold() {
+        if (moveHistory.size() <= 6) {
+            return false;
+        }
+        int s = moveHistory.size();
+        int[] i = new int[]{s - 1, s - 3, s - 5, s - 2, s - 4, s - 6};
+        return (moveHistory.get(i[0]).equals(moveHistory.get(i[1])) && moveHistory.get(i[1]) == moveHistory.get(i[2]) &&
+                moveHistory.get(i[3]).equals(moveHistory.get(i[4])) && moveHistory.get(i[4]) == moveHistory.get(i[5]));
     }
 
     public int[][] parseMoveStr(String moveStr) {
