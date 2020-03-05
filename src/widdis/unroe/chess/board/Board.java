@@ -121,9 +121,7 @@ public class Board {
     // Needs to take move input in long algebraic notation without hyphens or capture delimiters, as per UCI protocol
     // https://en.wikipedia.org/wiki/Algebraic_notation_%28chess%29#Long_algebraic_notation
     public int[] move(String moveStr) {
-        if(moveStr.length() != 4) {
-            throw new IllegalArgumentException("Invalid Move!");
-        }
+
         // m is the parsed move
         // m[0] is the source position, m[1] is the destination position
         int[][] m = parseMoveStr(moveStr);
@@ -210,8 +208,10 @@ public class Board {
                 if (!board[i][j].isEmpty() && board[i][j].getPiece().getColor() != color) {
                     char c1 = (char) (j + 49), c2 = (char) (i + 97);
                     for (Square move : board[i][j].getPiece().getLegalMoves(board[i][j], board)) {
+
                         char c3 = (char) (move.getPos()[0] + 49), c4 = (char) (move.getPos()[1] + 97);
                         this.move(new String(new char[]{c2, c1, c4, c3}));
+
                         // For every move, check if it's legal by seeing if the opponent will be put in check
                         if (this.isCheck(color)) {
                             unmove();
