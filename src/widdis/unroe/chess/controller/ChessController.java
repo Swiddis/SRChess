@@ -50,7 +50,10 @@ public class ChessController {
                 isInPlay = false;
                 endGame();
             }
-
+            if(endOfTurnCheck()) {
+                isInPlay = false;
+                endGame();
+            }
             latestMove[0] = -1;
             latestMove[1] = -1;
         }
@@ -72,7 +75,10 @@ public class ChessController {
             else {
                 compTurn(ai);
             }
-
+            if(endOfTurnCheck()) {
+                isInPlay = false;
+                endGame();
+            }
             toggleActivePlayer();
             if (board.checkWin() != 0) {
                 isInPlay = false;
@@ -95,6 +101,10 @@ public class ChessController {
             else {
                 compTurn(ai_BLACK);
             }
+            if(endOfTurnCheck()) {
+                isInPlay = false;
+                endGame();
+            }
             toggleActivePlayer();
             if (board.checkWin() != 0) {
                 isInPlay = false;
@@ -108,12 +118,20 @@ public class ChessController {
     private boolean playerTurn() {
         view.showBoard(activePlayer, board);
         view.displayMessage(getActivePlayerName() + "'s turn");
-        boolean pieceMoved = movePiece();
+        boolean pieceMoved;
+        while(true) {
+            try {
+                pieceMoved = movePiece();
+                break;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                view.displayMessage("Invalid Move! Please try again");
+            }
+        }
         view.showBoard(activePlayer, board, latestMove);
+
         if (pieceMoved) {
             if (board.checkForPromotion(activePlayer, latestMove[0], latestMove[1])) {
                 String newPiece = view.promptPromotion();
-
                 board.promote(activePlayer, latestMove[0], latestMove[1], newPiece);
             }
             view.displayMessage("Piece moved! Press enter to continue");
@@ -129,12 +147,24 @@ public class ChessController {
 
         board.move(comp.makeMove(board.getMoveHistory()));
 
-        //move
-        //show board with latest move
-
     }
 
+    private boolean endOfTurnCheck() {
+        if(board.isCheckmate(activePlayer)){
+            view.displayMessage(getActivePlayerName() + " is in checkmate!");
+            return true;
+        }
+        else if(board.isCheck(activePlayer)) {
+            view.displayMessage(getActivePlayerName() + " is in check!");
+            return false;
+        }
+        else if(board.isStalemate(activePlayer)) {
+            view.displayMessage("Game is a stalemate!");
+            return true;
+        }
+        return false;
 
+    }
     private boolean movePiece() {
         while(true) {
             try {
