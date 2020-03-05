@@ -16,7 +16,7 @@ public class Stockfish implements AutoCloseable {
     // Level difficulty presets are the tried and true versions provided by lichess:
     // https://github.com/niklasf/fishnet/blob/master/fishnet.py#L116
     // Note they apply to an older version, they use 8 while we use 11.
-    private static final int[] LVL_SKILL = new int[]{0, 3, 6, 10, 14, 18, 20};
+    private static final int[] LVL_SKILL = new int[]{0, 3, 6, 10, 14, 16, 18, 20};
     private static final int[] LVL_MOVETIMES = new int[]{50, 100, 150, 200, 300, 400, 500, 1000};
     private static final int[] LVL_DEPTHS = new int[]{1, 1, 2, 3, 5, 8, 13, 22};
     private Process engine;
@@ -26,7 +26,6 @@ public class Stockfish implements AutoCloseable {
     public Stockfish(int level) throws IOException {
         this.initialize();
         this.setLevel(level);
-        this.setLevelProperties();
     }
 
     public void close() throws IOException {
@@ -82,11 +81,13 @@ public class Stockfish implements AutoCloseable {
                 "setoption name Skill Level value %d",
                 hashSize,
                 LVL_SKILL[level]));
+        engineIn.flush();
     }
 
     public void resetGame() throws IOException {
         isready();
         engWrite("ucinewgame");
+
     }
 
     public String makeMove(ArrayList<String> moves) throws IOException {
@@ -95,15 +96,18 @@ public class Stockfish implements AutoCloseable {
         if (moves.size() > 0)
             engWrite("position startpos moves " + String.join(" ", moves));
         else
+
             engWrite("position startpos");
         // Tell engine to determine a move
         isready();
         engWrite("go movetime " + LVL_MOVETIMES[level] + " depth " + LVL_DEPTHS[level] + "\n");
+
         // Move will be in the format "bestmove e2e4 ponder e7e6", we extract the 'e2e4' segment
         // Wait for the move output
         String line;
         do {
             line = engineOut.nextLine();
+            //System.out.println(line);
         } while (!line.startsWith("bestmove"));
         // Extract output from engine and return it
         return line.split("\\s")[1];

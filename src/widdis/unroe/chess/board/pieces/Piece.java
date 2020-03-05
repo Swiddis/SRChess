@@ -8,6 +8,8 @@ public abstract class Piece {
     public enum Color {WHITE, BLACK}
     protected Color color;
 
+
+
     @Override
     public abstract String toString();
     public abstract String toFEN();
