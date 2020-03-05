@@ -208,10 +208,10 @@ public class Board {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (!board[i][j].isEmpty() && board[i][j].getPiece().getColor() != color) {
-                    char c1 = (char) (j + 97), c2 = (char) (i + 49);
+                    char c1 = (char) (j + 49), c2 = (char) (i + 97);
                     for (Square move : board[i][j].getPiece().getLegalMoves(board[i][j], board)) {
-                        char c3 = (char) (move.getPos()[0] + 97), c4 = (char) (move.getPos()[1] + 49);
-                        this.move(new String(new char[]{c1, c2, c3, c4}));
+                        char c3 = (char) (move.getPos()[0] + 49), c4 = (char) (move.getPos()[1] + 97);
+                        this.move(new String(new char[]{c2, c1, c4, c3}));
                         // For every move, check if it's legal by seeing if the opponent will be put in check
                         if (this.isCheck(color)) {
                             unmove();
