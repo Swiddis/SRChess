@@ -276,6 +276,67 @@ public class Board {
                 moveHistory.get(i[3]).equals(moveHistory.get(i[4])) && moveHistory.get(i[4]) == moveHistory.get(i[5]));
     }
 
+    public boolean checkInsufficientMaterial() {
+        /*
+        There are 3 types of insufficient material draws to look for:
+        King vs King
+        King + Bishop vs King
+        King + Knight vs King
+        King + Bishop vs King + Bishop w/ bishops on same color
+        */
+        int whiteBishops = 0, blackBishops = 0, whiteKnights = 0, blackKnights = 0;
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (board[i][j].isEmpty()) continue;
+                Piece p = board[i][j].getPiece();
+                if (p instanceof King) {
+                    continue;
+                } else if (p instanceof Bishop) {
+                    if (p.getColor() == Piece.Color.WHITE) whiteBishops++;
+                    else if (p.getColor() == Piece.Color.BLACK) blackBishops++;
+                } else if (p instanceof Knight) {
+                    if (p.getColor() == Piece.Color.WHITE) whiteKnights++;
+                    else if (p.getColor() == Piece.Color.BLACK) blackKnights++;
+                } else {
+                    return false;
+                }
+            }
+        }
+        // Draw by knights
+        if (whiteKnights + blackKnights == 1 && whiteBishops + blackBishops == 0) {
+            return true;
+        // Trivial draw by bishops
+        } else if (whiteBishops + blackBishops == 1 && whiteKnights + blackKnights == 0) {
+            return true;
+        // Nontrivial draw by bishops
+        } else if (whiteBishops == 1 && blackBishops == 1 && whiteKnights + blackKnights == 0) {
+            Piece.Color firstBishopColor = null;
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
+                    if (!board[i][j].isEmpty() && board[i][j].getPiece() instanceof Bishop) {
+                        if (firstBishopColor == null) {
+                            if (i + j % 2 == 0) {
+                                firstBishopColor = Piece.Color.BLACK;
+                            } else {
+                                firstBishopColor = Piece.Color.WHITE;
+                            }
+                        } else {
+                            if (i + j % 2 == 0) {
+                                return firstBishopColor == Piece.Color.BLACK;
+                            } else {
+                                return firstBishopColor == Piece.Color.WHITE;
+                            }
+                        }
+                    }
+                }
+            }
+        // Lone kings
+        } else {
+            return whiteKnights + blackKnights == 0 && whiteBishops + blackBishops == 0;
+        }
+        return false; // Logically I don't think this can fall through, but the compiler says otherwise.
+    }
+
     public int[][] parseMoveStr(String moveStr) {
         // For now, blindly assume input is proper
         moveStr = moveStr.toLowerCase();
