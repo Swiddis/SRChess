@@ -1,5 +1,6 @@
 package widdis.unroe.chess.board;
 
+import javafx.scene.effect.Blend;
 import widdis.unroe.chess.board.pieces.*;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ public class Board {
     public static final int SIZE = 8;
     private Square[][] board;
     private Square[][] previousBoard;
+    private int fiftyMoveCounter;
 
 
     private ArrayList<String> moveHistory;
@@ -25,6 +27,7 @@ public class Board {
         setBoard();
         // Also get move history, needed to use UCI protocol
         moveHistory = new ArrayList<>();
+        fiftyMoveCounter = 0;
     }
 
     // Parse a string to a board, with lowercase corresponding to black pieces, uppercase corresponding to white.
@@ -125,6 +128,11 @@ public class Board {
         if (board[m[0][0]][m[0][1]].getPiece().checkIsLegal(
                 board[m[0][0]][m[0][1]], board[m[1][0]][m[1][1]], board
         )) {
+            if (board[m[1][0]][m[1][1]].isEmpty() && !(board[m[0][0]][m[0][1]].getPiece() instanceof Pawn)) {
+                fiftyMoveCounter++;
+            } else {
+                fiftyMoveCounter = 0;
+            }
             board[m[1][0]][m[1][1]].setPiece(board[m[0][0]][m[0][1]].getPiece());
             board[m[0][0]][m[0][1]].setPiece(null);
             board[m[0][0]][m[0][1]].setHasMoved(true);
@@ -198,11 +206,12 @@ public class Board {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (!board[i][j].isEmpty() && board[i][j].getPiece().getColor() != color) {
-                    char c1 = (char) (j + 97), c2 = (char) (i + 49);
+                    char c1 = (char) (j + 49), c2 = (char) (i + 97);
                     for (Square move : board[i][j].getPiece().getLegalMoves(board[i][j], board)) {
-                        char c3 = (char) (move.getPos()[0] + 97), c4 = (char) (move.getPos()[1] + 49);
-                        System.out.println(new String(new char[]{c1, c2, c3, c4}));
-                        this.move(new String(new char[]{c1, c2, c3, c4}));
+
+                        char c3 = (char) (move.getPos()[0] + 49), c4 = (char) (move.getPos()[1] + 97);
+                        this.move(new String(new char[]{c2, c1, c4, c3}));
+
                         // For every move, check if it's legal by seeing if the opponent will be put in check
                         if (this.isCheck(color)) {
                             unmove();
@@ -250,6 +259,82 @@ public class Board {
                 break;
         }
         moveHistory.set(moveHistory.size() - 1, moveHistory.get(moveHistory.size() - 1) + newPiece);
+    }
+
+    public boolean checkFiftyMoves() {
+        // We need to double it from 50 because one move is one step for each player, and we increment every step
+        return fiftyMoveCounter >= 100;
+    }
+
+    public boolean checkThreefold() {
+        if (moveHistory.size() <= 6) {
+            return false;
+        }
+        int s = moveHistory.size();
+        int[] i = new int[]{s - 1, s - 3, s - 5, s - 2, s - 4, s - 6};
+        return (moveHistory.get(i[0]).equals(moveHistory.get(i[1])) && moveHistory.get(i[1]) == moveHistory.get(i[2]) &&
+                moveHistory.get(i[3]).equals(moveHistory.get(i[4])) && moveHistory.get(i[4]) == moveHistory.get(i[5]));
+    }
+
+    public boolean checkInsufficientMaterial() {
+        /*
+        There are 3 types of insufficient material draws to look for:
+        King vs King
+        King + Bishop vs King
+        King + Knight vs King
+        King + Bishop vs King + Bishop w/ bishops on same color
+        */
+        int whiteBishops = 0, blackBishops = 0, whiteKnights = 0, blackKnights = 0;
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (board[i][j].isEmpty()) continue;
+                Piece p = board[i][j].getPiece();
+                if (p instanceof King) {
+                    continue;
+                } else if (p instanceof Bishop) {
+                    if (p.getColor() == Piece.Color.WHITE) whiteBishops++;
+                    else if (p.getColor() == Piece.Color.BLACK) blackBishops++;
+                } else if (p instanceof Knight) {
+                    if (p.getColor() == Piece.Color.WHITE) whiteKnights++;
+                    else if (p.getColor() == Piece.Color.BLACK) blackKnights++;
+                } else {
+                    return false;
+                }
+            }
+        }
+        // Draw by knights
+        if (whiteKnights + blackKnights == 1 && whiteBishops + blackBishops == 0) {
+            return true;
+        // Trivial draw by bishops
+        } else if (whiteBishops + blackBishops == 1 && whiteKnights + blackKnights == 0) {
+            return true;
+        // Nontrivial draw by bishops
+        } else if (whiteBishops == 1 && blackBishops == 1 && whiteKnights + blackKnights == 0) {
+            Piece.Color firstBishopColor = null;
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
+                    if (!board[i][j].isEmpty() && board[i][j].getPiece() instanceof Bishop) {
+                        if (firstBishopColor == null) {
+                            if (i + j % 2 == 0) {
+                                firstBishopColor = Piece.Color.BLACK;
+                            } else {
+                                firstBishopColor = Piece.Color.WHITE;
+                            }
+                        } else {
+                            if (i + j % 2 == 0) {
+                                return firstBishopColor == Piece.Color.BLACK;
+                            } else {
+                                return firstBishopColor == Piece.Color.WHITE;
+                            }
+                        }
+                    }
+                }
+            }
+        // Lone kings
+        } else {
+            return whiteKnights + blackKnights == 0 && whiteBishops + blackBishops == 0;
+        }
+        return false; // Logically I don't think this can fall through, but the compiler says otherwise.
     }
 
     public int[][] parseMoveStr(String moveStr) {

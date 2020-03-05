@@ -30,9 +30,10 @@ public class Stockfish implements AutoCloseable {
 
     public void close() throws IOException {
         if (engine == null) return;
-        engineIn.write("quit\n");
+        engWrite("quit");
         engineIn.close();
         engineOut.close();
+        engine.destroy();
     }
 
     private void initialize() {
@@ -41,18 +42,19 @@ public class Stockfish implements AutoCloseable {
             engine = pb.start();
             engineOut = new Scanner(engine.getInputStream());
             engineIn = new BufferedWriter(new OutputStreamWriter(engine.getOutputStream()));
-            engineIn.write("uci\n");
-            engineIn.flush();
+            engWrite("uci");
         } catch (IOException ex) {
-            ex.printStackTrace();
             throw new RuntimeException("Error starting Stockfish process");
-
         }
     }
 
-    public void isready() throws IOException {
-        engineIn.write("isready\n");
+    public void engWrite(String s) throws IOException {
+        engineIn.write(s + "\n");
         engineIn.flush();
+    }
+
+    public void isready() throws IOException {
+        engWrite("isready");
         String line;
         do {
             line = engineOut.nextLine();
@@ -74,9 +76,9 @@ public class Stockfish implements AutoCloseable {
     private void setLevelProperties() throws IOException {
         isready();
         int hashSize = 62 * (level + 1) + 16;
-        engineIn.write(String.format(
+        engWrite(String.format(
                 "setoption name Hash value %d\n" +
-                "setoption name Skill Level value %d\n",
+                "setoption name Skill Level value %d",
                 hashSize,
                 LVL_SKILL[level]));
         engineIn.flush();
@@ -84,22 +86,22 @@ public class Stockfish implements AutoCloseable {
 
     public void resetGame() throws IOException {
         isready();
-        engineIn.write("ucinewgame\n");
-        engineIn.flush();
+        engWrite("ucinewgame");
+
     }
 
     public String makeMove(ArrayList<String> moves) throws IOException {
         // Setup position
         isready();
         if (moves.size() > 0)
-            engineIn.write("position startpos moves " + String.join(" ", moves) + "\n");
+            engWrite("position startpos moves " + String.join(" ", moves));
         else
-            engineIn.write("position startpos\n");
-        engineIn.flush();
+
+            engWrite("position startpos");
         // Tell engine to determine a move
         isready();
-        engineIn.write("go movetime " + LVL_MOVETIMES[level] + " depth " + LVL_DEPTHS[level] + "\n");
-        engineIn.flush();
+        engWrite("go movetime " + LVL_MOVETIMES[level] + " depth " + LVL_DEPTHS[level] + "\n");
+
         // Move will be in the format "bestmove e2e4 ponder e7e6", we extract the 'e2e4' segment
         // Wait for the move output
         String line;
