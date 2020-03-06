@@ -4,16 +4,23 @@ import widdis.unroe.chess.board.Square;
 
 import java.util.HashSet;
 
-public abstract class Piece {
-    public enum Color {WHITE, BLACK}
+public abstract class Piece implements Cloneable {
+    public abstract Piece clone() throws CloneNotSupportedException;
 
-    Color color;
+    public enum Color {WHITE, BLACK}
+    protected Color color;
 
     @Override
     public abstract String toString();
     public abstract String toFEN();
     public abstract String toUnicode();
-    public abstract Color getColor();
+
+    public void setColor(Color c) {
+        color = c;
+    }
+    public Color getColor() {
+        return color;
+    }
 
 
     public abstract HashSet<Square> getLegalMoves(Square curr, Square[][] board);

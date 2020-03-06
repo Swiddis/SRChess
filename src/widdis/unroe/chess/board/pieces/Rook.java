@@ -6,9 +6,12 @@ import widdis.unroe.chess.board.Square;
 import java.util.HashSet;
 
 public class Rook extends Piece {
-    private Color color;
     public Rook(Color color) {
-        this.color = color;
+        this.setColor(color);
+    }
+
+    public Rook clone() {
+        return new Rook(color);
     }
 
     @Override
@@ -60,11 +63,6 @@ public class Rook extends Piece {
             return "\u2656";
         }
         return "\u265C";
-    }
-
-    @Override
-    public Color getColor() {
-        return this.color;
     }
 
     @Override

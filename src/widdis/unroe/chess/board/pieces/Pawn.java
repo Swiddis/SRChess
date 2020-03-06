@@ -6,9 +6,12 @@ import widdis.unroe.chess.board.Square;
 import java.util.HashSet;
 
 public class Pawn extends Piece {
-    private Color color;
     public Pawn(Color color) {
-        this.color = color;
+        this.setColor(color);
+    }
+
+    public Pawn clone() {
+        return new Pawn(color);
     }
 
     @Override
@@ -34,14 +37,6 @@ public class Pawn extends Piece {
             // Then verify the destination is empty
             if (board[p[0]+2*step][p[1]].isEmpty()) {
                 moveSet.add(board[p[0]+2*step][p[1]]);
-                // Also handle en passant for double move
-                // Reset the full board's en passant before updating this piece's
-                for (int i = 0; i < Board.SIZE; i++) {
-                    for (int j = 0; j < Board.SIZE; j++) {
-                        board[i][j].setEnPassant(false);
-                    }
-                }
-                board[p[0]+step][p[1]].setEnPassant(true);
             }
         }
         return moveSet;
@@ -61,10 +56,6 @@ public class Pawn extends Piece {
             return "\u2659";
         }
         return "\u265F";
-    }
-    @Override
-    public Color getColor() {
-        return this.color;
     }
 
 

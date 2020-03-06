@@ -1,17 +1,22 @@
 package widdis.unroe.chess.controller;
 
+import widdis.unroe.chess.ai.Stockfish;
 import widdis.unroe.chess.board.Board;
 import widdis.unroe.chess.board.pieces.Piece;
 import widdis.unroe.chess.view.View;
 
+import java.io.IOException;
+
 public class ChessController {
-    View view = new View();
-    Board board = new Board();
+    private View view = new View();
+    private Board board;
     private int[] latestMove = new int[2];
-    Piece.Color activePlayer = Piece.Color.WHITE;
-    public void run() {
+    private Piece.Color activePlayer = Piece.Color.WHITE;
+    public void run() throws IOException {
         boolean exitRequested = false;
         while(!exitRequested) {
+            board = new Board();
+            activePlayer = Piece.Color.WHITE;
             switch(view.menuPrompt()){
                 case 1:
                     //player vs player
@@ -19,9 +24,11 @@ public class ChessController {
                     break;
                 case 2:
                     //player vs comp
+                    playervsAI();
                     break;
                 case 3:
                     //comp vs comp
+                    AIvsAI();
                     break;
                 case 4:
                     exitRequested = true;
@@ -35,21 +42,7 @@ public class ChessController {
     private void playervsplayer() {
         boolean isInPlay = true;
         while(isInPlay) {
-            view.showBoard(activePlayer, board);
-            view.displayMessage(getActivePlayerName() + "'s turn");
-            boolean pieceMoved = movePiece();
-            view.showBoard(activePlayer, board, latestMove);
-            //clear latest move so there is no accidental highlight
-            latestMove[0] = -1;
-            latestMove[1] = -1;
-            if(pieceMoved) {
-                view.displayMessage("Piece moved! Press enter to continue");
-            }
-            else {
-                view.displayMessage(getActivePlayerName() +  " gave up!");
-                isInPlay = false;
-                endGame();
-            }
+            isInPlay = playerTurn();
             view.promptForContinue();
             toggleActivePlayer();
 
@@ -57,8 +50,122 @@ public class ChessController {
                 isInPlay = false;
                 endGame();
             }
+            if(endOfTurnCheck()) {
+                isInPlay = false;
+                endGame();
+            }
+            latestMove[0] = -1;
+            latestMove[1] = -1;
+        }
+        endGame();
+    }
+
+
+
+    private void playervsAI() throws IOException {
+        int difficulty = view.promptForDifficulty();
+        Stockfish ai = new Stockfish(difficulty);
+
+        boolean isInPlay = true;
+        while (isInPlay) {
+            if (activePlayer.equals(Piece.Color.WHITE)) { // Player's turn
+                isInPlay = playerTurn();
+                view.promptForContinue();
+            }
+            else {
+                compTurn(ai);
+            }
+            if(endOfTurnCheck()) {
+                isInPlay = false;
+                endGame();
+            }
+            toggleActivePlayer();
+            if (board.checkWin() != 0) {
+                isInPlay = false;
+                endGame();
+            }
+            latestMove[0] = -1;
+            latestMove[1] = -1;
         }
     }
+
+    private void AIvsAI() throws IOException {
+        Stockfish ai_WHITE = new Stockfish(8);
+        Stockfish ai_BLACK = new Stockfish(8);
+        boolean isInPlay = true;
+        while (isInPlay) {
+            view.showBoard(Piece.Color.WHITE, board);
+            if (activePlayer.equals(Piece.Color.WHITE)) {
+                compTurn(ai_WHITE);
+            }
+            else {
+                compTurn(ai_BLACK);
+            }
+            if(endOfTurnCheck()) {
+                isInPlay = false;
+                endGame();
+            }
+            toggleActivePlayer();
+            if (board.checkWin() != 0) {
+                isInPlay = false;
+                endGame();
+            }
+
+        }
+    }
+
+
+    private boolean playerTurn() {
+        view.showBoard(activePlayer, board);
+        view.displayMessage(getActivePlayerName() + "'s turn");
+        boolean pieceMoved;
+        while(true) {
+            try {
+                pieceMoved = movePiece();
+                break;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                view.displayMessage("Invalid Move! Please try again");
+            }
+        }
+        view.showBoard(activePlayer, board, latestMove);
+
+        if (pieceMoved) {
+            if (board.checkForPromotion(activePlayer, latestMove[0], latestMove[1])) {
+                String newPiece = view.promptPromotion();
+                board.promote(activePlayer, latestMove[0], latestMove[1], newPiece);
+            }
+            view.displayMessage("Piece moved! Press enter to continue");
+        } else {
+            view.displayMessage(getActivePlayerName() + " gave up!");
+             return false;
+        }
+        return true;
+    }
+
+
+    private void compTurn(Stockfish comp) throws IOException {
+        board.move(comp.makeMove(board.getMoveHistory()));
+    }
+
+
+    private boolean endOfTurnCheck() {
+        if(board.isCheckmate(activePlayer)){
+            view.displayMessage(getActivePlayerName() + " is in checkmate!");
+            return true;
+        }
+        else if(board.isCheck(activePlayer)) {
+            view.displayMessage(getActivePlayerName() + " is in check!");
+            return false;
+        }
+        else if(board.isStalemate(activePlayer)) {
+            view.displayMessage("Game is a stalemate!");
+            return true;
+        }
+        return false;
+
+    }
+
+
     private boolean movePiece() {
         while(true) {
             try {
@@ -71,6 +178,8 @@ public class ChessController {
                 else {
                     view.displayMessage("Invalid Move! Please try again");
                 }
+            } catch(NullPointerException npe) {
+                view.displayMessage("Invalid Move! Please try again");
             }
         }
     }
@@ -80,14 +189,10 @@ public class ChessController {
         activePlayer = activePlayer == Piece.Color.BLACK ? Piece.Color.WHITE : Piece.Color.BLACK;
     }
     private void endGame() {
-        toggleActivePlayer();
+
         view.displayMessage(getActivePlayerName() + " won the game!\r\nPress enter to continue");
         view.promptForContinue();
-
-
     }
-
-
 
     private String getActivePlayerName() {
         return activePlayer.toString().substring(0,1) +  activePlayer.toString().toLowerCase().substring(1);
