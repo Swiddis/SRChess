@@ -95,6 +95,7 @@ public class Board {
     public Square[][] getBoard() {
         return this.board;
     }
+
     public int checkWin() {
         boolean[] kings = new boolean[2]; //0 : white; 1 : black
         for(int i = 0; i < SIZE; i++) {
@@ -206,7 +207,7 @@ public class Board {
         }
     }
 
-    // Pass in the attacking player
+    // Pass in the defending player
     public boolean isCheck(Piece.Color color) {
         int kposx = -1, kposy = -1;
         // Locate the opposing king
@@ -258,12 +259,12 @@ public class Board {
     }
 
     public boolean isCheckmate(Piece.Color color) {
-        return isCheck(color) && isMate(color);
+        return isCheck(color == Piece.Color.BLACK ? Piece.Color.WHITE : Piece.Color.BLACK) && isMate(color);
     }
 
     // Pass in attacking color
     public boolean isStalemate(Piece.Color color) {
-        return !isCheck(color) && isMate(color);
+        return !isCheck(color == Piece.Color.BLACK ? Piece.Color.WHITE : Piece.Color.BLACK) && isMate(color);
     }
 
     public boolean checkForPromotion(Piece.Color activePlayer, int x, int y) {
@@ -309,7 +310,7 @@ public class Board {
 
     public boolean checkInsufficientMaterial() {
         /*
-        There are 3 types of insufficient material draws to look for:
+        There are 4 types of insufficient material draws to look for:
         King vs King
         King + Bishop vs King
         King + Knight vs King
