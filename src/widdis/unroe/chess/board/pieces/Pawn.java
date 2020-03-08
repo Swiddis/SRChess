@@ -10,6 +10,10 @@ public class Pawn extends Piece {
         this.setColor(color);
     }
 
+    public Pawn clone() {
+        return new Pawn(color);
+    }
+
     @Override
     public HashSet<Square> getLegalMoves(Square curr, Square[][] board) {
         HashSet<Square> moveSet = new HashSet<>();
@@ -33,14 +37,6 @@ public class Pawn extends Piece {
             // Then verify the destination is empty
             if (board[p[0]+2*step][p[1]].isEmpty()) {
                 moveSet.add(board[p[0]+2*step][p[1]]);
-                // Also handle en passant for double move
-                // Reset the full board's en passant before updating this piece's
-                for (int i = 0; i < Board.SIZE; i++) {
-                    for (int j = 0; j < Board.SIZE; j++) {
-                        board[i][j].setEnPassant(false);
-                    }
-                }
-                board[p[0]+step][p[1]].setEnPassant(true);
             }
         }
         return moveSet;

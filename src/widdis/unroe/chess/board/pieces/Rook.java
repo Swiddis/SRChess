@@ -10,6 +10,10 @@ public class Rook extends Piece {
         this.setColor(color);
     }
 
+    public Rook clone() {
+        return new Rook(color);
+    }
+
     @Override
     public HashSet<Square> getLegalMoves(Square curr, Square[][] board) {
         HashSet<Square> moveSet = new HashSet<>();

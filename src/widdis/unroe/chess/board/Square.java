@@ -2,11 +2,20 @@ package widdis.unroe.chess.board;
 
 import widdis.unroe.chess.board.pieces.Piece;
 
-public class Square {
+public class Square implements Cloneable {
     private Piece piece;
     private int row,col;
     private boolean enPassant;
     private boolean hasMoved;
+
+    public Square clone() throws CloneNotSupportedException {
+        Square s = (Square) super.clone();
+        if (piece != null) s.setPiece(piece.clone());
+        s.setPos(row, col);
+        s.setEnPassant(enPassant);
+        s.setHasMoved(hasMoved);
+        return s;
+    }
 
     public void setPiece(Piece p) {
         piece = p;
