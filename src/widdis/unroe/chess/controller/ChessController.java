@@ -149,7 +149,9 @@ public class ChessController {
             view.displayMessage(getActivePlayerName() + " won the game!");
             return true;
         }
-        else if(board.isCheck(activePlayer)) {
+        // Switch the color for isCheck for some unworldly reason I cannot begin to fathom
+        // Seriously, what demon have we summoned by writing this code
+        else if(board.isCheck(activePlayer == Piece.Color.WHITE ? Piece.Color.BLACK : Piece.Color.WHITE)) {
             view.displayMessage(getActivePlayerName() + " is in check!");
             return false;
         }
