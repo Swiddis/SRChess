@@ -7,7 +7,21 @@ import java.util.HashSet;
 public abstract class Piece implements Cloneable {
     public abstract Piece clone() throws CloneNotSupportedException;
 
-    public enum Color {WHITE, BLACK}
+    public enum Color {
+        WHITE {
+            public Color inverse() {
+                return Color.BLACK;
+            }
+        }, BLACK {
+            public Color inverse() {
+                return Color.WHITE;
+            }
+        };
+
+        private Color() { }
+
+        public abstract Color inverse();
+    }
     protected Color color;
 
     @Override
