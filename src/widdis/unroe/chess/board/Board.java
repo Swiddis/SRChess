@@ -268,6 +268,7 @@ public class Board {
 
     public void promote(Piece.Color activePlayer, int x, int y, String newPiece, boolean update) {
         switch (newPiece) {
+
             case "q":
                 board[x][y].setPiece(new Queen(activePlayer));
                 break;
