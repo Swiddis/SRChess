@@ -45,22 +45,15 @@ public class ChessController {
             isInPlay = playerTurn();
             view.promptForContinue();
             toggleActivePlayer();
-
-            if(board.checkWin() != 0) {
-                isInPlay = false;
-                endGame();
-            }
             if(endOfTurnCheck()) {
+                view.showBoard(activePlayer, board);
                 isInPlay = false;
-                endGame();
             }
             latestMove[0] = -1;
             latestMove[1] = -1;
         }
         endGame();
     }
-
-
 
     private void playervsAI() throws IOException {
         int difficulty = view.promptForDifficulty();
@@ -75,18 +68,17 @@ public class ChessController {
             else {
                 compTurn(ai);
             }
-            if(endOfTurnCheck()) {
-                isInPlay = false;
-                endGame();
-            }
+
             toggleActivePlayer();
-            if (board.checkWin() != 0) {
+            if(endOfTurnCheck()) {
+                view.showBoard(activePlayer, board);
                 isInPlay = false;
-                endGame();
             }
+
             latestMove[0] = -1;
             latestMove[1] = -1;
         }
+        endGame();
     }
 
     private void AIvsAI() throws IOException {
@@ -101,17 +93,14 @@ public class ChessController {
             else {
                 compTurn(ai_BLACK);
             }
-            if(endOfTurnCheck()) {
-                isInPlay = false;
-                endGame();
-            }
-            toggleActivePlayer();
-            if (board.checkWin() != 0) {
-                isInPlay = false;
-                endGame();
-            }
 
+            toggleActivePlayer();
+            if (endOfTurnCheck()) {
+                view.showBoard(Piece.Color.WHITE, board);
+                isInPlay = false;
+            }
         }
+        endGame();
     }
 
 
@@ -132,7 +121,7 @@ public class ChessController {
         if (pieceMoved) {
             if (board.checkForPromotion(activePlayer, latestMove[0], latestMove[1])) {
                 String newPiece = view.promptPromotion();
-                board.promote(activePlayer, latestMove[0], latestMove[1], newPiece);
+                board.promote(activePlayer, latestMove[0], latestMove[1], newPiece, true);
             }
             view.displayMessage("Piece moved! Press enter to continue");
         } else {
@@ -151,9 +140,13 @@ public class ChessController {
     private boolean endOfTurnCheck() {
         if(board.isCheckmate(activePlayer)){
             view.displayMessage(getActivePlayerName() + " is in checkmate!");
+            toggleActivePlayer();
+            view.displayMessage(getActivePlayerName() + " won the game!");
             return true;
         }
-        else if(board.isCheck(activePlayer)) {
+        // Switch the color for isCheck for some unworldly reason I cannot begin to fathom
+        // Seriously, what demon have we summoned by writing this code
+        else if(board.isCheck(activePlayer.inverse())) {
             view.displayMessage(getActivePlayerName() + " is in check!");
             return false;
         }
@@ -161,8 +154,12 @@ public class ChessController {
             view.displayMessage("Game is a stalemate!");
             return true;
         }
-        return false;
+        else if(board.checkFiftyMoves() || board.checkInsufficientMaterial() || board.checkThreefold()) {
+            view.displayMessage("Game is a draw!");
+            return true;
+        }
 
+        return false;
     }
 
 
@@ -186,11 +183,11 @@ public class ChessController {
 
 
     private void toggleActivePlayer() {
-        activePlayer = activePlayer == Piece.Color.BLACK ? Piece.Color.WHITE : Piece.Color.BLACK;
+        activePlayer = activePlayer.inverse();
     }
     private void endGame() {
-
-        view.displayMessage(getActivePlayerName() + " won the game!\r\nPress enter to continue");
+        view.showBoard(activePlayer, board);
+        view.displayMessage("Press enter to continue");
         view.promptForContinue();
     }
 
@@ -198,4 +195,3 @@ public class ChessController {
         return activePlayer.toString().substring(0,1) +  activePlayer.toString().toLowerCase().substring(1);
     }
 }
-

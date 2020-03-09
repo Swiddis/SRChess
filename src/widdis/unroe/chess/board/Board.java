@@ -1,15 +1,13 @@
 package widdis.unroe.chess.board;
 
-import javafx.scene.effect.Blend;
 import widdis.unroe.chess.board.pieces.*;
-
-import javax.swing.*;
 import java.util.ArrayList;
 
 public class Board {
     public static final int SIZE = 8;
     private Square[][] board;
     private Square[][] previousBoard;
+    private int prevFmc;
     private int fiftyMoveCounter;
 
 
@@ -96,39 +94,15 @@ public class Board {
         return this.board;
     }
 
-    public int checkWin() {
-        boolean[] kings = new boolean[2]; //0 : white; 1 : black
-        for(int i = 0; i < SIZE; i++) {
-            for(int j = 0; j < SIZE; j++) {
-                try {
-                    if (board[i][j].getPiece().toString().equals("king")) {
-                        if (board[i][j].getPiece().getColor().equals(Piece.Color.WHITE)) {
-                            kings[0] = true;
-                        } else {
-                            kings[1] = true;
-                        }
-                    }
-                } catch(NullPointerException ignored) {} //Empty squares
-            }
-        }
-
-        if(kings[0] && !kings[1]) { //return 1 on White win
-            return 1;
-        }
-        else if(!kings[0] && kings[1]) { //return 2 on Black win
-            return 2;
-        }
-        return 0;
-    }
-
     // Needs to take move input in long algebraic notation without hyphens or capture delimiters, as per UCI protocol
     // https://en.wikipedia.org/wiki/Algebraic_notation_%28chess%29#Long_algebraic_notation
     public int[] move(String moveStr) {
-        if(moveStr.length() != 4) {
+        if (moveStr.length() < 4 || moveStr.length() > 5) {
             throw new IllegalArgumentException("Invalid Move! " + moveStr);
         }
         // m is the parsed move
         // m[0] is the source position, m[1] is the destination position
+        // parseMoveStr will ignore a 5th character if it's present, we can manually handle it later.
         int[][] m = parseMoveStr(moveStr);
         if (board[m[0][0]][m[0][1]].getPiece().checkIsLegal(
                 board[m[0][0]][m[0][1]], board[m[1][0]][m[1][1]], board
@@ -142,6 +116,7 @@ public class Board {
             } catch (CloneNotSupportedException ex) {
                 throw new RuntimeException(ex);
             }
+            prevFmc = fiftyMoveCounter;
             if (board[m[1][0]][m[1][1]].isEmpty() && !(board[m[0][0]][m[0][1]].getPiece() instanceof Pawn)) {
                 fiftyMoveCounter++;
             } else {
@@ -160,7 +135,7 @@ public class Board {
                     board[m[0][0]][5].setPiece(board[m[0][0]][7].getPiece());
                     board[m[0][0]][7].setPiece(null);
                 } else {
-                    board[m[0][0]][2].setPiece(board[m[0][0]][0].getPiece());
+                    board[m[0][0]][3].setPiece(board[m[0][0]][0].getPiece());
                     board[m[0][0]][0].setPiece(null);
                 }
             }
@@ -182,8 +157,23 @@ public class Board {
                 }
                 if (board[m[1][0]][m[1][1]].getPiece() instanceof Pawn &&
                         Math.abs(m[1][0] - m[0][0]) == 2) {
-                    board[m[1][0] + (m[1][0] - m[0][0]) / 2][m[1][1]].setEnPassant(true);
+                    board[m[1][0] - (m[1][0] - m[0][0]) / 2][m[1][1]].setEnPassant(true);
                 }
+            }
+            // Special handling for pawn promotion
+            // If the move is length 4 and a pawn needs to promote, assume someone else will handle it.
+            // If a 5th character is present in the string, process it on the spot.
+            if ((m[1][0] == 0 || m[1][0] == 7) && board[m[1][0]][m[1][1]].getPiece() instanceof Pawn
+                    && moveStr.length() == 5) {
+                promote(board[m[1][0]][m[1][1]].getPiece().getColor(),
+                        m[1][0], m[1][1], moveStr.charAt(4) + "", false);
+            }
+
+            // Finally, we need to make sure that the user didn't put themself into check.
+            if (isCheck(board[m[1][0]][m[1][1]].getPiece().getColor().inverse())) {
+                unmove();
+                fiftyMoveCounter = prevFmc;
+                throw new IllegalArgumentException("Illegal Move: user is in check!");
             }
 
             // If all of this went through correctly, the move was valid, add to history
@@ -241,11 +231,11 @@ public class Board {
                     char c1 = (char) (j + 97), c2 = (char) (i + 49);
                     for (Square move : board[i][j].getPiece().getLegalMoves(board[i][j], board)) {
                         char c3 = (char) (move.getPos()[1] + 97), c4 = (char) (move.getPos()[0] + 49);
-                        int fmct = fiftyMoveCounter;
+                        prevFmc = fiftyMoveCounter;
                         this.move(new String(new char[]{c1, c2, c3, c4}));
-                        if (fmct < fiftyMoveCounter) fiftyMoveCounter--;
+                        fiftyMoveCounter = prevFmc;
                         // For every move, check if the opponent will be put in check
-                        if (this.isCheck(color == Piece.Color.BLACK ? Piece.Color.WHITE : Piece.Color.BLACK)) {
+                        if (this.isCheck(color.inverse())) {
                             unmove();
                         } else {
                             unmove();
@@ -259,12 +249,12 @@ public class Board {
     }
 
     public boolean isCheckmate(Piece.Color color) {
-        return isCheck(color == Piece.Color.BLACK ? Piece.Color.WHITE : Piece.Color.BLACK) && isMate(color);
+        return isCheck(color.inverse()) && isMate(color);
     }
 
     // Pass in attacking color
     public boolean isStalemate(Piece.Color color) {
-        return !isCheck(color == Piece.Color.BLACK ? Piece.Color.WHITE : Piece.Color.BLACK) && isMate(color);
+        return !isCheck(color.inverse()) && isMate(color);
     }
 
     public boolean checkForPromotion(Piece.Color activePlayer, int x, int y) {
@@ -275,8 +265,9 @@ public class Board {
         return false;
     }
 
-    public void promote(Piece.Color activePlayer, int x, int y, String newPiece) {
+    public void promote(Piece.Color activePlayer, int x, int y, String newPiece, boolean update) {
         switch (newPiece) {
+
             case "q":
                 board[x][y].setPiece(new Queen(activePlayer));
                 break;
@@ -290,7 +281,7 @@ public class Board {
                 board[x][y].setPiece(new Knight(activePlayer));
                 break;
         }
-        moveHistory.set(moveHistory.size() - 1, moveHistory.get(moveHistory.size() - 1) + newPiece);
+        if (update) moveHistory.set(moveHistory.size() - 1, moveHistory.get(moveHistory.size() - 1) + newPiece);
     }
 
     public boolean checkFiftyMoves() {

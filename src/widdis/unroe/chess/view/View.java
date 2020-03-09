@@ -97,7 +97,6 @@ public class View {
     public String promptPromotion() {
         String newPiece = io.getStringPrefix("What would you like to promote your pawn to? (q,r,n,b): ", "[qrnbQRNB]");
         newPiece = newPiece.trim().toLowerCase();
-        this.displayMessage("Invalid Piece!");
         return newPiece;
     }
     public String promptForMove() {
