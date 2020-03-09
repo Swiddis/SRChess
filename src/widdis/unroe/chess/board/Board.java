@@ -190,7 +190,6 @@ public class Board {
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
                     this.board[i][j] = previousBoard[i][j].clone();
-                    if (board[i][j].isEnPassant()) System.out.println(i + " " + j);
                 }
             }
         } catch (CloneNotSupportedException ex) {
