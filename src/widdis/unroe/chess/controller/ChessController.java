@@ -46,6 +46,7 @@ public class ChessController {
             view.promptForContinue();
             toggleActivePlayer();
             if(endOfTurnCheck()) {
+                view.showBoard(activePlayer, board);
                 isInPlay = false;
             }
             latestMove[0] = -1;
@@ -67,10 +68,13 @@ public class ChessController {
             else {
                 compTurn(ai);
             }
+
+            toggleActivePlayer();
             if(endOfTurnCheck()) {
+                view.showBoard(activePlayer, board);
                 isInPlay = false;
             }
-            toggleActivePlayer();
+
             latestMove[0] = -1;
             latestMove[1] = -1;
         }
@@ -92,6 +96,7 @@ public class ChessController {
 
             toggleActivePlayer();
             if (endOfTurnCheck()) {
+                view.showBoard(Piece.Color.WHITE, board);
                 isInPlay = false;
             }
         }

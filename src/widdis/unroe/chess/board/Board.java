@@ -257,7 +257,7 @@ public class Board {
     }
 
     public void promote(Piece.Color activePlayer, int x, int y, String newPiece) {
-        switch (newPiece) {
+        switch (newPiece.trim().toLowerCase()) {
             case "q":
                 board[x][y].setPiece(new Queen(activePlayer));
                 break;
