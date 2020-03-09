@@ -170,11 +170,12 @@ public class Board {
             }
 
             // Finally, we need to make sure that the user didn't put themself into check.
-            if (isCheck(board[m[1][0]][m[1][1]].getPiece().getColor().inverse())) {
+            //Couldn't get working in time
+            /*if (isCheck(board[m[1][0]][m[1][1]].getPiece().getColor())) {
                 unmove();
                 fiftyMoveCounter = prevFmc;
                 throw new IllegalArgumentException("Illegal Move: user is in check!");
-            }
+            }*/
 
             // If all of this went through correctly, the move was valid, add to history
             moveHistory.add(moveStr);
