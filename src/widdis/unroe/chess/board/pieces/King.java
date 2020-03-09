@@ -40,7 +40,7 @@ public class King extends Piece {
             // Castling queenside
             if (board[p[0]][0].hasNotMoved() &&
                     board[p[0]][1].isEmpty() && board[p[0]][2].isEmpty() && board[p[0]][3].isEmpty()) {
-                moveSet.add(board[p[0]][1]);
+                moveSet.add(board[p[0]][2]);
             }
         }
         return moveSet;
