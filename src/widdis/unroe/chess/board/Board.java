@@ -7,6 +7,7 @@ public class Board {
     public static final int SIZE = 8;
     private Square[][] board;
     private Square[][] previousBoard;
+    private int prevFmc;
     private int fiftyMoveCounter;
 
 
@@ -115,6 +116,7 @@ public class Board {
             } catch (CloneNotSupportedException ex) {
                 throw new RuntimeException(ex);
             }
+            prevFmc = fiftyMoveCounter;
             if (board[m[1][0]][m[1][1]].isEmpty() && !(board[m[0][0]][m[0][1]].getPiece() instanceof Pawn)) {
                 fiftyMoveCounter++;
             } else {
@@ -165,6 +167,13 @@ public class Board {
                     && moveStr.length() == 5) {
                 promote(board[m[1][0]][m[1][1]].getPiece().getColor(),
                         m[1][0], m[1][1], moveStr.charAt(4) + "", false);
+            }
+
+            // Finally, we need to make sure that the user didn't put themself into check.
+            if (isCheck(board[m[1][0]][m[1][1]].getPiece().getColor().inverse())) {
+                unmove();
+                fiftyMoveCounter = prevFmc;
+                throw new IllegalArgumentException("Illegal Move: user is in check!");
             }
 
             // If all of this went through correctly, the move was valid, add to history
@@ -223,9 +232,9 @@ public class Board {
                     char c1 = (char) (j + 97), c2 = (char) (i + 49);
                     for (Square move : board[i][j].getPiece().getLegalMoves(board[i][j], board)) {
                         char c3 = (char) (move.getPos()[1] + 97), c4 = (char) (move.getPos()[0] + 49);
-                        int fmct = fiftyMoveCounter;
+                        prevFmc = fiftyMoveCounter;
                         this.move(new String(new char[]{c1, c2, c3, c4}));
-                        if (fmct < fiftyMoveCounter) fiftyMoveCounter--;
+                        fiftyMoveCounter = prevFmc;
                         // For every move, check if the opponent will be put in check
                         if (this.isCheck(color.inverse())) {
                             unmove();
