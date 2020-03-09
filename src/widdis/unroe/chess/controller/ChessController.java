@@ -45,9 +45,6 @@ public class ChessController {
             isInPlay = playerTurn();
             view.promptForContinue();
             toggleActivePlayer();
-            if(board.checkWin() != 0) {
-                isInPlay = false;
-            }
             if(endOfTurnCheck()) {
                 isInPlay = false;
             }
@@ -56,8 +53,6 @@ public class ChessController {
         }
         endGame();
     }
-
-
 
     private void playervsAI() throws IOException {
         int difficulty = view.promptForDifficulty();
@@ -76,9 +71,6 @@ public class ChessController {
                 isInPlay = false;
             }
             toggleActivePlayer();
-            if (board.checkWin() != 0) {
-                isInPlay = false;
-            }
             latestMove[0] = -1;
             latestMove[1] = -1;
         }
@@ -99,11 +91,9 @@ public class ChessController {
             }
 
             toggleActivePlayer();
-            if (board.checkWin() != 0) {
+            if (endOfTurnCheck()) {
                 isInPlay = false;
-
             }
-
         }
         endGame();
     }
@@ -149,7 +139,9 @@ public class ChessController {
             view.displayMessage(getActivePlayerName() + " won the game!");
             return true;
         }
-        else if(board.isCheck(activePlayer)) {
+        // Switch the color for isCheck for some unworldly reason I cannot begin to fathom
+        // Seriously, what demon have we summoned by writing this code
+        else if(board.isCheck(activePlayer.inverse())) {
             view.displayMessage(getActivePlayerName() + " is in check!");
             return false;
         }
@@ -186,7 +178,7 @@ public class ChessController {
 
 
     private void toggleActivePlayer() {
-        activePlayer = activePlayer == Piece.Color.BLACK ? Piece.Color.WHITE : Piece.Color.BLACK;
+        activePlayer = activePlayer.inverse();
     }
     private void endGame() {
 
@@ -198,4 +190,3 @@ public class ChessController {
         return activePlayer.toString().substring(0,1) +  activePlayer.toString().toLowerCase().substring(1);
     }
 }
-
