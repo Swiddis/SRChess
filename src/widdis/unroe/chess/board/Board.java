@@ -133,7 +133,7 @@ public class Board {
                     board[m[0][0]][5].setPiece(board[m[0][0]][7].getPiece());
                     board[m[0][0]][7].setPiece(null);
                 } else {
-                    board[m[0][0]][2].setPiece(board[m[0][0]][0].getPiece());
+                    board[m[0][0]][3].setPiece(board[m[0][0]][0].getPiece());
                     board[m[0][0]][0].setPiece(null);
                 }
             }
@@ -155,7 +155,7 @@ public class Board {
                 }
                 if (board[m[1][0]][m[1][1]].getPiece() instanceof Pawn &&
                         Math.abs(m[1][0] - m[0][0]) == 2) {
-                    board[m[1][0] + (m[1][0] - m[0][0]) / 2][m[1][1]].setEnPassant(true);
+                    board[m[1][0] - (m[1][0] - m[0][0]) / 2][m[1][1]].setEnPassant(true);
                 }
             }
             // Special handling for pawn promotion
@@ -164,7 +164,7 @@ public class Board {
             if ((m[1][0] == 0 || m[1][0] == 7) && board[m[1][0]][m[1][1]].getPiece() instanceof Pawn
                     && moveStr.length() == 5) {
                 promote(board[m[1][0]][m[1][1]].getPiece().getColor(),
-                        m[1][0], m[1][1], moveStr.charAt(4) + "");
+                        m[1][0], m[1][1], moveStr.charAt(4) + "", false);
             }
 
             // If all of this went through correctly, the move was valid, add to history
@@ -181,6 +181,7 @@ public class Board {
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
                     this.board[i][j] = previousBoard[i][j].clone();
+                    if (board[i][j].isEnPassant()) System.out.println(i + " " + j);
                 }
             }
         } catch (CloneNotSupportedException ex) {
@@ -256,7 +257,7 @@ public class Board {
         return false;
     }
 
-    public void promote(Piece.Color activePlayer, int x, int y, String newPiece) {
+    public void promote(Piece.Color activePlayer, int x, int y, String newPiece, boolean update) {
         switch (newPiece) {
             case "q":
                 board[x][y].setPiece(new Queen(activePlayer));
@@ -271,7 +272,7 @@ public class Board {
                 board[x][y].setPiece(new Knight(activePlayer));
                 break;
         }
-        moveHistory.set(moveHistory.size() - 1, moveHistory.get(moveHistory.size() - 1) + newPiece);
+        if (update) moveHistory.set(moveHistory.size() - 1, moveHistory.get(moveHistory.size() - 1) + newPiece);
     }
 
     public boolean checkFiftyMoves() {

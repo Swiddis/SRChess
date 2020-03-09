@@ -116,7 +116,7 @@ public class ChessController {
         if (pieceMoved) {
             if (board.checkForPromotion(activePlayer, latestMove[0], latestMove[1])) {
                 String newPiece = view.promptPromotion();
-                board.promote(activePlayer, latestMove[0], latestMove[1], newPiece);
+                board.promote(activePlayer, latestMove[0], latestMove[1], newPiece, true);
             }
             view.displayMessage("Piece moved! Press enter to continue");
         } else {
@@ -181,7 +181,7 @@ public class ChessController {
         activePlayer = activePlayer.inverse();
     }
     private void endGame() {
-
+        view.showBoard(activePlayer, board);
         view.displayMessage("Press enter to continue");
         view.promptForContinue();
     }
