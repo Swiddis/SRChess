@@ -19,10 +19,24 @@ public class View {
 
     private DisplayCharacter displayCharacter= DisplayCharacter.FEN;
 
+    /**
+     * Overloaded method
+     * Draws the board to the console. Orients the board with the color specified on the bottom.
+     * No latest move highlight.
+     * @param activePlayer used for orientation of the board. Active player is displayed on bottom of board.
+     * @param board The board in its current state.
+     */
     public void showBoard(Piece.Color activePlayer, Board board) {
         showBoard(activePlayer, board, null);
     }
-
+    /**
+     * Overloaded method
+     * Draws the board to the console. Orients the board with the color specified on the bottom.
+     * Highlights the latest moved tile for better visuals for the user.
+     * @param activePlayer used for orientation of the board. Active player is displayed on bottom of board.
+     * @param board The board in its current state.
+     * @param latestMove X and Y position of latest move made. Highlights the last move to help the user.
+     */
     public void showBoard(Piece.Color activePlayer, Board board, int[] latestMove) {
         boolean checkered = true;
         StringBuilder boardString = new StringBuilder(" |");
@@ -76,6 +90,15 @@ public class View {
         this.displayMessage(boardString.toString());
     }
 
+    /**
+     * Gets the character used to represent each piece.
+     * Can choose between FEN (letters) or Unicode representations.
+     * Unicode is not monospaced and results in unbalanced board rows.
+     * @param board the board in its current state.
+     * @param i position x in multidimensional array.
+     * @param j position y in multidimensional array.
+     * @return character representation of the respected piece as a string.
+     */
     private String getPieceCharacter(Board board, int i, int j) {
         if(displayCharacter == DisplayCharacter.FEN) {
             return board.getBoard()[i][j].getPiece().toFEN();
@@ -85,20 +108,37 @@ public class View {
         }
     }
 
-
+    /**
+     * Used to display message through the console.
+     * @param output String passed in to display.
+     */
     public void displayMessage(String output) {
         System.out.println(output);
     }
 
+    /**
+     * Used to halt between player turns. Makes the user enter a string of any size to continue.
+     */
     public void promptForContinue() {
         io.getString();
     }
 
+    /**
+     * Prompts the user when a pawn is ready to be promoted. Only accepts one of the following : qrnbQRNB.
+     * Continues to prompt until a valid input is given
+     * @return the piece that the user selected.
+     */
     public String promptPromotion() {
         String newPiece = io.getStringPrefix("What would you like to promote your pawn to? (q,r,n,b): ", "[qrnbQRNB]");
         newPiece = newPiece.trim().toLowerCase();
         return newPiece;
     }
+
+    /**
+     * Prompts the user for a move. Expects a move string of 4 characters or an exit statement.
+     * If neither are found, it will continue to prompt the user.
+     * @returns the move string.
+     */
     public String promptForMove() {
         String move = io.getStringPrefix("Enter a move (eg a1a2) or resign: ");
         if(move.equals("resign") || move.equals("exit") || move.equals("quit") ) {
@@ -109,12 +149,25 @@ public class View {
         }
         return move;
     }
+
+    /**
+     * Displays the menu options to the user.
+     * Allows them to select one of the four options by integer.
+     * Continues to prompt until given a valid response.
+     * @returns integer chosen by user.
+     */
     public int menuPrompt() {
         this.displayMessage("Chess Menu");
         String[] options = {"Player vs Player", "Player vs Computer", "Computer vs Computer", "Exit"};
         return io.getIntFromMenu(options, false);
     }
 
+    /**
+     * Prompts the user for the difficulty of the opposing computer.
+     * Accepts input from one to eight inclusive.
+     * Continues to prompt until given a valid response.
+     * @returns integer chosen by user.
+     */
     public int promptForDifficulty() {
         return io.getIntPrefix("What difficulty would you like to play against? (1-8): ", 1,8);
     }
