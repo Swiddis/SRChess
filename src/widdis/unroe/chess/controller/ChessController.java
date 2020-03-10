@@ -8,10 +8,16 @@ import widdis.unroe.chess.view.View;
 import java.io.IOException;
 
 public class ChessController {
+
     private View view = new View();
     private Board board;
     private int[] latestMove = new int[2];
     private Piece.Color activePlayer = Piece.Color.WHITE;
+
+    /**
+     * Initial method run by the static main class.
+     * Continues to loop through menu until exit is requested.
+     */
     public void run() throws IOException {
         boolean exitRequested = false;
         while(!exitRequested) {
@@ -39,6 +45,11 @@ public class ChessController {
 
     }
 
+    /**
+     * Loops through player vs player condition, taking each users input, moving the pieces and
+     * checking for end game conditions.
+     * If an end game condition is met, exit the loop and go to the endGame() method.
+     */
     private void playervsplayer() {
         boolean isInPlay = true;
         while(isInPlay) {
@@ -55,6 +66,11 @@ public class ChessController {
         endGame();
     }
 
+    /**
+     * Loops through player vs computer condition. Prompts user and gets computer input.
+     * Checks end conditions on each turn. If end condition is met, break out of loop and
+     * go to endGame() method.
+     */
     private void playervsAI() throws IOException {
         int difficulty = view.promptForDifficulty();
         UCIEngine ai = new UCIEngine(difficulty);
@@ -81,6 +97,10 @@ public class ChessController {
         endGame();
     }
 
+    /**
+     * Loops through Computer vs Computer condition. Gets input and performs checks upon them.
+     * Breaks loop when end game check is positive. Then goes to endGame() method.
+     */
     private void AIvsAI() throws IOException {
         UCIEngine ai_WHITE = new UCIEngine(8);
         UCIEngine ai_BLACK = new UCIEngine(8);
@@ -103,7 +123,11 @@ public class ChessController {
         endGame();
     }
 
-
+    /**
+     * Displays the board. Gets the users move input.
+     * Check if the user can promote their pawn. If so, give them the view promotion prompt
+     * @returns whether the player moved (true) or resigned (false)
+     */
     private boolean playerTurn() {
         view.showBoard(activePlayer, board);
         view.displayMessage(getActivePlayerName() + "'s turn");
@@ -132,11 +156,18 @@ public class ChessController {
     }
 
 
+    /**
+     * Set the computers move on the board.
+     * @param comp the computer player making the move.
+     */
     private void compTurn(UCIEngine comp) throws IOException {
         board.move(comp.makeMove(board.getMoveHistory()));
     }
 
-
+    /**
+     * Checks for check, checkmate, stalemate, fifty moves, insufficient material, and threefold repetition.
+     * @return If detected that the game is over, return true. Else false
+     */
     private boolean endOfTurnCheck() {
         if(board.isCheckmate(activePlayer)){
             view.displayMessage(getActivePlayerName() + " is in checkmate!");
@@ -162,7 +193,11 @@ public class ChessController {
         return false;
     }
 
-
+    /**
+     * Players move piece method. Continuously prompts user for move input until valid or exit condition is found.
+     * sets move to latestMove, used later to highlight board square in display.
+     * @returns true if piece moved. False if exit condition is found.
+     */
     private boolean movePiece() {
         while(true) {
             try {
@@ -181,16 +216,25 @@ public class ChessController {
         }
     }
 
-
+    /**
+     * Toggles the active player. Used to change players turn.
+     */
     private void toggleActivePlayer() {
         activePlayer = activePlayer.inverse();
     }
+
+    /**
+     * Method that runs at end of game loop. Prompts the user to continue.
+     */
     private void endGame() {
-        view.showBoard(activePlayer, board);
         view.displayMessage("Press enter to continue");
         view.promptForContinue();
     }
 
+    /**
+     * Formats the active players name. Capitalizes first letter only.
+     * @returns formatted name String.
+     */
     private String getActivePlayerName() {
         return activePlayer.toString().substring(0,1) +  activePlayer.toString().toLowerCase().substring(1);
     }
