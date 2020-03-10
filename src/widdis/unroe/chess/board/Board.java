@@ -94,8 +94,12 @@ public class Board {
         return this.board;
     }
 
-    // Needs to take move input in long algebraic notation without hyphens or capture delimiters, as per UCI protocol
-    // https://en.wikipedia.org/wiki/Algebraic_notation_%28chess%29#Long_algebraic_notation
+    /**
+     * Make a move on the board with the given movestring.
+     *
+     * @param moveStr The move to be made, in long algebraic notation.
+     * @return The integer positions of the destination square.
+     */
     public int[] move(String moveStr) {
         if (moveStr.length() < 4 || moveStr.length() > 5) {
             throw new IllegalArgumentException("Invalid Move! " + moveStr);
@@ -184,6 +188,9 @@ public class Board {
         }
     }
 
+    /**
+     * Revert the previous move.
+     */
     private void unmove() {
         try {
             moveHistory.remove(moveHistory.size() - 1);
@@ -197,7 +204,12 @@ public class Board {
         }
     }
 
-    // Pass in the defending player
+    /**
+     * Determines if the board state is a check.
+     *
+     * @param color The color of the defending player.
+     * @return A boolean determining whether the position is check.
+     */
     public boolean isCheck(Piece.Color color) {
         int kposx = -1, kposy = -1;
         // Locate the opposing king
@@ -223,7 +235,14 @@ public class Board {
         return false;
     }
 
-    // Pass in the attacking player
+    /**
+     * Determine if the board state is a mate. A mate is specifically defined as a position where there are no legal moves
+     * that avoid check, but the player might not necessarily be in check themselves. This is useful to distinguish
+     * between checkmates and stalemates.
+     *
+     * @param color The color of the attacking player.
+     * @return A boolean representing the mate state.
+     */
     private boolean isMate(Piece.Color color) {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
@@ -248,6 +267,7 @@ public class Board {
         return true;
     }
 
+    // Pass in attacking color
     public boolean isCheckmate(Piece.Color color) {
         return isCheck(color.inverse()) && isMate(color);
     }
@@ -257,6 +277,14 @@ public class Board {
         return !isCheck(color.inverse()) && isMate(color);
     }
 
+    /**
+     * Determine whether a promotion is warranted at the given position.
+     *
+     * @param activePlayer Player to check
+     * @param x Row
+     * @param y Column
+     * @return A boolean representing promotion state.
+     */
     public boolean checkForPromotion(Piece.Color activePlayer, int x, int y) {
         if(board[x][y].getPiece() instanceof Pawn) {
             if (activePlayer == Piece.Color.WHITE && x == 7) return true;
@@ -265,6 +293,15 @@ public class Board {
         return false;
     }
 
+    /**
+     * Promote on the given position.
+     *
+     * @param activePlayer Player to promote
+     * @param x Position row
+     * @param y Position column
+     * @param newPiece New piecefor promotion
+     * @param update Determine whether to automatically update movehistory.
+     */
     public void promote(Piece.Color activePlayer, int x, int y, String newPiece, boolean update) {
         switch (newPiece) {
 
@@ -284,11 +321,13 @@ public class Board {
         if (update) moveHistory.set(moveHistory.size() - 1, moveHistory.get(moveHistory.size() - 1) + newPiece);
     }
 
+    // Check fifty move rule.
     public boolean checkFiftyMoves() {
         // We need to double it from 50 because one move is one step for each player, and we increment every step
         return fiftyMoveCounter >= 100;
     }
 
+    // Check threefold repetition.
     public boolean checkThreefold() {
         if (moveHistory.size() <= 6) {
             return false;
@@ -299,6 +338,7 @@ public class Board {
                 moveHistory.get(i[3]).equals(moveHistory.get(i[4])) && moveHistory.get(i[4]).equals(moveHistory.get(i[5])));
     }
 
+    // Check draw by insufficient material.
     public boolean checkInsufficientMaterial() {
         /*
         There are 4 types of insufficient material draws to look for:
@@ -312,9 +352,7 @@ public class Board {
             for (int j = 0; j < SIZE; j++) {
                 if (board[i][j].isEmpty()) continue;
                 Piece p = board[i][j].getPiece();
-                if (p instanceof King) {
-                    continue;
-                } else if (p instanceof Bishop) {
+                if (p instanceof Bishop) {
                     if (p.getColor() == Piece.Color.WHITE) whiteBishops++;
                     else if (p.getColor() == Piece.Color.BLACK) blackBishops++;
                 } else if (p instanceof Knight) {
@@ -360,6 +398,7 @@ public class Board {
         return false; // Logically I don't think this can fall through, but the compiler says otherwise.
     }
 
+    // Parse a given move string, in long algebraic notation.
     public int[][] parseMoveStr(String moveStr) {
         // For now, blindly assume input is proper
         moveStr = moveStr.toLowerCase();

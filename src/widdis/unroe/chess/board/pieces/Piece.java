@@ -18,8 +18,6 @@ public abstract class Piece implements Cloneable {
             }
         };
 
-        private Color() { }
-
         public abstract Color inverse();
     }
     protected Color color;
@@ -35,7 +33,6 @@ public abstract class Piece implements Cloneable {
     public Color getColor() {
         return color;
     }
-
 
     public abstract HashSet<Square> getLegalMoves(Square curr, Square[][] board);
 

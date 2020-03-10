@@ -1,6 +1,6 @@
 package widdis.unroe.chess.controller;
 
-import widdis.unroe.chess.ai.Stockfish;
+import widdis.unroe.chess.ai.UCIEngine;
 import widdis.unroe.chess.board.Board;
 import widdis.unroe.chess.board.pieces.Piece;
 import widdis.unroe.chess.view.View;
@@ -57,7 +57,7 @@ public class ChessController {
 
     private void playervsAI() throws IOException {
         int difficulty = view.promptForDifficulty();
-        Stockfish ai = new Stockfish(difficulty);
+        UCIEngine ai = new UCIEngine(difficulty);
 
         boolean isInPlay = true;
         while (isInPlay) {
@@ -82,8 +82,8 @@ public class ChessController {
     }
 
     private void AIvsAI() throws IOException {
-        Stockfish ai_WHITE = new Stockfish(8);
-        Stockfish ai_BLACK = new Stockfish(8);
+        UCIEngine ai_WHITE = new UCIEngine(8);
+        UCIEngine ai_BLACK = new UCIEngine(8);
         boolean isInPlay = true;
         while (isInPlay) {
             view.showBoard(Piece.Color.WHITE, board);
@@ -132,7 +132,7 @@ public class ChessController {
     }
 
 
-    private void compTurn(Stockfish comp) throws IOException {
+    private void compTurn(UCIEngine comp) throws IOException {
         board.move(comp.makeMove(board.getMoveHistory()));
     }
 
